@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_background1"
+    tools:context=".Activities.ProfileTab">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:id="@+id/prof_countainer">
+
+        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+            android:id="@+id/prof_Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hassan"
+            android:textSize="30sp"
+            android:textColor="@color/white"
+            android:layout_marginBottom="100dp"
+            android:layout_marginLeft="15dp"/>
+        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+            android:id="@+id/prof_Email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/email"
+            android:textColorHint="@color/white"
+            android:textSize="30sp"
+            android:textColor="@color/white"
+            android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:padding="10dp"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@drawable/view_background" />
+        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+            android:id="@+id/student"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/students"
+            android:textSize="30sp"
+            android:textColor="@color/white"
+            android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:padding="10dp"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@drawable/view_background" />
+        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+            android:id="@+id/setting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/setting"
+            android:textSize="30sp"
+            android:textColor="@color/white"
+            android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:padding="10dp"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@drawable/view_background" />
+
+        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+            android:id="@+id/addCourse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Course"
+            android:textSize="30sp"
+            android:textColor="@color/white"
+            android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:padding="10dp"
+             />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@drawable/view_background" />
+
+
+        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+            android:id="@+id/addcategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Category"
+            android:textSize="30sp"
+            android:textColor="@color/white"
+            android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:padding="10dp"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@drawable/view_background" />
+
+    </LinearLayout>
+
+
+</FrameLayout>

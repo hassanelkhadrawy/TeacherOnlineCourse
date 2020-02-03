@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.teacheronlinecourse">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="false">
+        <activity android:name=".Activities.Videos"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".Activities.ChaptersVideo"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Activities.WebViewActivity"
+            android:theme="@style/FullScreen" />
+        <activity
+            android:name=".Activities.Files"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Activities.Courses"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Activities.CourseInformation"
+            android:theme="@style/WithoutActionBar" />
+        <activity
+            android:name=".Activities.ChaptersActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Activities.Home"
+            android:label="@string/title_activity_home"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Activities.Registration"
+            android:theme="@style/WithoutActionBar" />
+        <activity
+            android:name=".Activities.Login"
+            android:theme="@style/WithoutActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

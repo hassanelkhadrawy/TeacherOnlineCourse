@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_background1"
+    android:id="@+id/registerCountainer"
+    tools:context=".Activities.Registration">
+
+    <ImageView
+        android:id="@+id/back"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="345dp"
+        android:layout_marginBottom="97dp"
+        android:src="@drawable/ic_arrow_back_black_24dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="30dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:text="@string/regiser"
+            android:textColor="@color/white"
+            android:textSize="45sp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="10dp"
+            android:textColorHint="@color/white">
+
+            <com.example.teacheronlinecourse.Fonts.Comfortaa_Regular
+                android:id="@+id/registerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_perm_identity_black_24dp"
+                android:hint="@string/name"
+                android:inputType="text"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="23sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+
+            android:textColorHint="@color/white">
+
+            <com.example.teacheronlinecourse.Fonts.Comfortaa_Regular
+                android:id="@+id/registerEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_perm_identity_black_24dp"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress"
+                android:text="hassan.com"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="23sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:textColorHint="@color/white">
+
+            <com.example.teacheronlinecourse.Fonts.Comfortaa_Regular
+                android:id="@+id/registerPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_lock_outline_black_24dp"
+                android:hint="@string/password"
+                android:inputType="textEmailAddress"
+                android:text="jo"
+                android:textColor="@color/white"
+                android:textSize="23sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+            android:layout_width="200dp"
+            android:layout_height="55dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/button_background"
+            android:gravity="center"
+            android:onClick="Register"
+            android:text="@string/regiser"
+            android:textColor="@color/blue"
+            android:textSize="25sp" />
+
+
+    </LinearLayout>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

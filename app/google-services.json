@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "570018959309",
+    "firebase_url": "https://teacher-online-course.firebaseio.com",
+    "project_id": "teacher-online-course",
+    "storage_bucket": "teacher-online-course.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570018959309:android:a8a71b53e4e171c31cbe84",
+        "android_client_info": {
+          "package_name": "com.example.teacheronlinecourse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "570018959309-ngv9h2epbu8ac679715li1v829bn38sg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.teacheronlinecourse",
+            "certificate_hash": "8831962b91093e6fe820b8af18afdca39f9ce39d"
+          }
+        },
+        {
+          "client_id": "570018959309-an4b6nuv5ov6l781mkb7a4unpmggkejg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpUeLzN_7UImblu26LfYolRnJ7fJ4fHUM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "570018959309-an4b6nuv5ov6l781mkb7a4unpmggkejg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
