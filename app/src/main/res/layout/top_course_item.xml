@@ -4,12 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
-    <com.example.teacheronlinecourse.Fonts.Comfortaa_Light
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Top courses in Security"
         android:id="@+id/topcourse"
-        android:textSize="25sp"/>
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="20sp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tobcourse_recycler"

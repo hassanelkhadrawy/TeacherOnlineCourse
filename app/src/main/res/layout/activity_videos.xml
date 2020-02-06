@@ -21,17 +21,20 @@
         android:layout_gravity="end"
         android:id="@+id/add"/>
 </LinearLayout>
-    <com.google.android.youtube.player.YouTubePlayerView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="gone"
-        android:id="@+id/youtubeplayer"/>
-    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-        android:id="@+id/exoplayerView"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1">
+
+
+        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+            android:id="@+id/exoplayerView"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            />
+
+
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

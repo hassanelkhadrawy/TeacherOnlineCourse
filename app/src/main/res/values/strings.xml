@@ -38,4 +38,6 @@
     <string name="add_file">add file</string>
     <string name="add_video">add video</string>
     <string name="or">OR</string>
+    <string name="not_found">not found</string>
+    <string name="unfavorite">Swape right or left to unfavorite</string>
 </resources>

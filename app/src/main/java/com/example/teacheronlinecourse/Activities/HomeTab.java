@@ -76,6 +76,14 @@ public class HomeTab extends Fragment {
 
 
                 categoryAdapter.Category.setText(categoryModel.getName());
+                categoryAdapter.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent=new Intent(getActivity(),Courses.class);
+                        intent.putExtra("CategoryName",categoryModel.getName());
+                        startActivity(intent);
+                    }
+                });
             }
         };
 
@@ -102,11 +110,11 @@ public class HomeTab extends Fragment {
             protected void populateViewHolder(final TopCoursesAdapter topcoursesAdapter, final CategoryModel categoryModel, final int i) {
 
                 topcoursesAdapter.TopText.setText("Top courses in "+categoryModel.getName());
-              DatabaseReference  databaseReference2 = FirebaseDatabase.getInstance().getReference("Courses").child(categoryModel.getName());
+             databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(categoryModel.getName());
 
-                recyclercourseAdapter=new FirebaseRecyclerAdapter<CourseModel, CoursesAdapter>(CourseModel.class,R.layout.course_item,CoursesAdapter.class,databaseReference2) {
+                recyclercourseAdapter=new FirebaseRecyclerAdapter<CourseModel, CoursesAdapter>(CourseModel.class,R.layout.course_item,CoursesAdapter.class,databaseReference) {
                     @Override
-                    protected void populateViewHolder(final CoursesAdapter coursesAdapter, CourseModel courseModel, int i) {
+                    protected void populateViewHolder(final CoursesAdapter coursesAdapter, CourseModel courseModel, int position) {
 
                         if (!courseModel.getCourse_image().equals("null")) {
 //                    coursesAdapter.courseImage.setVisibility(View.VISIBLE);
@@ -116,9 +124,10 @@ public class HomeTab extends Fragment {
 
                         }
                         coursesAdapter.CourseName.setText(courseModel.getCourse_name());
-//
+//                        coursesAdapter.ratingBar.setVisibility(View.GONE);
+
 //                        DatabaseReference  databaseReference3 = FirebaseDatabase.getInstance().getReference("CoursesRates");
-//                        databaseReference3.child(categoryModel.getName()).child(recyclercourseAdapter.getRef(i).getKey()).addValueEventListener(new ValueEventListener() {
+//                        databaseReference3.child(categoryModel.getName()).child(recyclercourseAdapter.getRef(position).getKey()).addValueEventListener(new ValueEventListener() {
 //                            @Override
 //                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 //                                RateModel rateModel;
@@ -139,15 +148,14 @@ public class HomeTab extends Fragment {
 //
 //                            }
 //                        });
-//
+
 
 
                     }
                 };
 
-                GridLayoutManager layoutManager =
-                        new GridLayoutManager(getActivity(), 1, GridLayoutManager.HORIZONTAL, false);
-                topcoursesAdapter.topRecycler.setLayoutManager(layoutManager);
+
+                topcoursesAdapter.topRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
                 topcoursesAdapter.topRecycler.setAdapter(recyclercourseAdapter);
                 Commans.progressDialog.dismiss();
 

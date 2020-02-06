@@ -3,6 +3,7 @@ package com.example.teacheronlinecourse.Activities;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,19 +32,30 @@ import com.example.teacheronlinecourse.Models.FileModel;
 import com.example.teacheronlinecourse.Models.LoadFileModel;
 import com.example.teacheronlinecourse.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
@@ -56,10 +69,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.UUID;
+
 
 public class Videos extends YouTubeBaseActivity {
 
@@ -77,16 +92,14 @@ public class Videos extends YouTubeBaseActivity {
     private RecyclerView recyclerVideo;
     private FirebaseRecyclerAdapter<FileModel, FileAdapter> adapter;
     private Comfortaa_Regular videoUrl;
-    private YouTubePlayerView youtubeplayer;
-    private YouTubePlayer.OnInitializedListener onInitializedListener;
     private ImageButton add;
-    SimpleExoPlayerView exoPlayerView;
-    SimpleExoPlayer exoPlayer;
-    MediaSource mediaSource;
-    MediaController mediaController;
     Uri videoURI;
-
-
+//========================================
+   private YouTubePlayer globalyouTubePlayer;
+    private SimpleExoPlayer player;
+    private MediaSource mediaSource;
+    private SimpleExoPlayerView exoPlayerView;
+    private boolean idPlaying=false;
 
 
     @Override
@@ -280,7 +293,6 @@ public class Videos extends YouTubeBaseActivity {
     private void initView() {
         countainer = (LinearLayout) findViewById(R.id.countainer);
         recyclerVideo = (RecyclerView) findViewById(R.id.recycler_video);
-        youtubeplayer = (YouTubePlayerView) findViewById(R.id.youtubeplayer);
 
 
         add = (ImageButton) findViewById(R.id.add);
@@ -291,7 +303,7 @@ public class Videos extends YouTubeBaseActivity {
             }
         });
         exoPlayerView = (SimpleExoPlayerView) findViewById(R.id.exoplayerView);
-        mediaController = new MediaController(this);
+       // mediaController = new MediaController(this);
 
     }
 
@@ -308,23 +320,40 @@ public class Videos extends YouTubeBaseActivity {
                 fileAdapter.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        if (fileModel.isFlag()){
-//
-//
-//                        }else {
-//                            youtubeplayer.setVisibility(View.VISIBLE);
-//                            videoview.setVisibility(View.GONE);
-//                            videoview.stopPlayback();
-//                            PlayingVideo(fileModel.getFileUrl());
-//                            youtubeplayer.initialize("AIzaSyDjhsWpcTgvUzmoAUP5pwzI7ZeuJWbVuhY", onInitializedListener);
-//                        }
+                        if (fileModel.isFlag()){
+                           // exoPlayerView.setVisibility(View.VISIBLE);
+
+                            if (player != null) {
+                                player.setPlayWhenReady(false);
+                                player.stop();
+                                player.seekTo(0);
+                                Exoplayer(fileModel.getFileUrl());
+
+                            }else {
+                                Exoplayer(fileModel.getFileUrl());
+
+                            }
+
+                        }else {
+                            if (player != null) {
+                                player.setPlayWhenReady(false);
+                                player.stop();
+                                player.seekTo(0);
+                                player.release();
+                            }
+
+                            Intent intent=new Intent(Videos.this,PlayYoutubeVideo.class);
+                            intent.putExtra("videoUrl",fileModel.getFileUrl());
+                            startActivity(intent);
 
 
-                        String urlvideo="https://firebasestorage.googleapis.com/v0/b/teacher-online-course.appspot.com/o/videos%2Fvideos%2F83e9dc17-a2c9-4cc6-85e4-acd1e305d615?alt=media&token=0b90e490-91a3-4e60-93e0-6797d0221c1b";
-                        Toast.makeText(Videos.this, fileModel.getFileUrl(), Toast.LENGTH_SHORT).show();
 
 
-                        Exoplayer(fileModel.getFileUrl());
+                        }
+
+
+
+
 
                     }
                 });
@@ -338,12 +367,13 @@ public class Videos extends YouTubeBaseActivity {
     }
 
     void Exoplayer(String VideoUrl) {
+
         try {
 
 
             BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
             TrackSelector trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory(bandwidthMeter));
-            exoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+            player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
 
             videoURI = Uri.parse(VideoUrl);
 
@@ -351,24 +381,37 @@ public class Videos extends YouTubeBaseActivity {
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
             mediaSource = new ExtractorMediaSource(videoURI, dataSourceFactory, extractorsFactory, null, null);
 
+            exoPlayerView.setPlayer(player);
+            player.prepare(mediaSource);
+            player.setPlayWhenReady(true);
+
 
         } catch (Exception e) {
-            Log.e("error", " exoplayer error " + e.toString());
+        }
+
+    }
+
+    private void onYoutubeClicked(String youtubeUrl) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        try {
+            getPackageManager().getPackageInfo("com.google.android.youtube", 0);
+            intent.setPackage("com.google.android.youtube");
+            intent.setData(Uri.parse(youtubeUrl));
+        } catch (PackageManager.NameNotFoundException e) {
+            intent.setData(Uri.parse(youtubeUrl));
+        } finally {
+            startActivity(intent);
         }
     }
-    private void PlayingVideo(final String Url) {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (player != null) {
+            player.setPlayWhenReady(false);
+            player.stop();
+            player.seekTo(0);
+            player.release();
+        }    }
 
-        onInitializedListener = new YouTubePlayer.OnInitializedListener() {
-            @Override
-            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
 
-                youTubePlayer.loadVideo(Url);
-            }
-
-            @Override
-            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-
-            }
-        };
-    }
 }

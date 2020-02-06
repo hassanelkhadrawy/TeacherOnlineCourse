@@ -8,9 +8,23 @@
     tools:context=".Activities.ChaptersActivity"
     android:orientation="vertical">
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:id="@+id/chaptersRecycler"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_background"
+        android:gravity="center"
+        android:id="@+id/finalexam"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="Final Exam"
+        android:textColor="@color/blue"
+        android:textSize="25sp" />
 
 </LinearLayout>

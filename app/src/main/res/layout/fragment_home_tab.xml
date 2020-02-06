@@ -20,20 +20,25 @@
         android:layout_height="232dp"
         android:background="@drawable/image" />
 
-<com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+<TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:textColor="@color/black"
     android:text="Categories"
-    android:textSize="30sp"/>
+    android:textStyle="bold"
+    android:layout_marginLeft="10dp"
+    android:textSize="25sp"/>
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
             android:id="@+id/category_recycler"/>
 
 
         <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
         android:id="@+id/course_recycler"/>
     </LinearLayout>
     </androidx.core.widget.NestedScrollView>
