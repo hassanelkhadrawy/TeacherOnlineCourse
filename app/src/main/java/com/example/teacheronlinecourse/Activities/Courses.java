@@ -49,10 +49,9 @@ public class Courses extends AppCompatActivity {
 
     private void retriveCourses() {
         Commans.Prograss(this, getString(R.string.waiting));
-        Commans.progressDialog.show();
         databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(CategoryName);
 
-        recyclerAdapter = new FirebaseRecyclerAdapter<CourseModel, CoursesAdapter>(CourseModel.class, R.layout.course_item,CoursesAdapter.class, databaseReference) {
+        recyclerAdapter = new FirebaseRecyclerAdapter<CourseModel, CoursesAdapter>(CourseModel.class, R.layout.courses_item,CoursesAdapter.class, databaseReference) {
             @Override
             protected void populateViewHolder(final CoursesAdapter coursesAdapter, final CourseModel courseModel, final int i) {
 
@@ -80,7 +79,10 @@ public class Courses extends AppCompatActivity {
                         rate = rate / dataSnapshot.getChildrenCount();
                         coursesAdapter.ratingBar.setRating(rate);
 
+
+
                     }
+
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -91,7 +93,6 @@ public class Courses extends AppCompatActivity {
 
                 FavouriteFunction(coursesAdapter,i);
 
-                Commans.progressDialog.dismiss();
 
 
                 coursesAdapter.courseImage.setOnClickListener(new View.OnClickListener() {
@@ -173,6 +174,7 @@ public class Courses extends AppCompatActivity {
 
     }
 
+
     private void initView() {
         coorsesRecycler = (RecyclerView) findViewById(R.id.coorses_recycler);
     }
@@ -189,6 +191,9 @@ public class Courses extends AppCompatActivity {
                         coursesAdapter.favourite.setImageResource(R.drawable.ic_favorite_border_black_24dp);
 
                     }
+
+                }else {
+
                 }
 
             }

@@ -40,4 +40,8 @@
     <string name="or">OR</string>
     <string name="not_found">not found</string>
     <string name="unfavorite">Swape right or left to unfavorite</string>
+    <string name="question">Question</string>
+    <string name="answer">Answer</string>
+    <string name="describtion">Describtion</string>
+    <string name="exams">Exams</string>
 </resources>

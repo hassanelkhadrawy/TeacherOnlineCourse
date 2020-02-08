@@ -4,48 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/maincolor"
     tools:context=".Activities.CourseInformation">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/courseCountainer"
+        >
 
-        <RelativeLayout
+        <ImageView
+            android:id="@+id/courseImage"
             android:layout_width="match_parent"
-            android:layout_height="312dp">
+            android:layout_height="278dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/image" />
 
-
-            <ImageView
-                android:id="@+id/courseImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:src="@drawable/image" />
-
-
-            <ImageView
-                android:id="@+id/arrow_Back"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="20dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_arrow_back_black_24dp" />
-        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="This course include"
                 android:layout_weight="1"
+                android:textStyle="bold"
                 android:textSize="25sp" />
-            <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+            <TextView
                 android:layout_width="0dp"
                 android:layout_weight="2.3"
                 android:layout_height="match_parent"
@@ -70,18 +59,18 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <com.example.teacheronlinecourse.Fonts.Comfortaa_Light
-                    android:id="@+id/course_num_video"
+                <TextView
+                    android:id="@+id/course_num_chapter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_ondemand_video_black_24dp"
+                    android:drawableLeft="@drawable/ic_folder_open_black_24dp"
                     android:drawablePadding="10dp"
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="30 Video"
-                    android:textSize="25sp" />
+                    android:textSize="20sp" />
 
-                <com.example.teacheronlinecourse.Fonts.Comfortaa_Light
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_attach_file_black_24dp"
@@ -89,9 +78,9 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="Support Files"
-                    android:textSize="25sp" />
+                    android:textSize="20sp" />
 
-                <com.example.teacheronlinecourse.Fonts.Comfortaa_Light
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_all_inclusive_black_24dp"
@@ -99,9 +88,9 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="Full life time access"
-                    android:textSize="25sp" />
+                    android:textSize="20sp" />
 
-                <com.example.teacheronlinecourse.Fonts.Comfortaa_Light
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_create_black_24dp"
@@ -109,7 +98,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="Support exams"
-                    android:textSize="25sp"
+                    android:textSize="20sp"
 
                     />
 
@@ -118,7 +107,37 @@
 
         </androidx.cardview.widget.CardView>
 
-        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:cardElevation="5dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:padding="5dp"
+                    android:text="Description"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/descrition"
+                    android:textSize="20sp"
+                    android:padding="5dp"
+                    android:layout_marginLeft="10dp"
+                    />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:id="@+id/enrol"
@@ -130,40 +149,23 @@
             android:textColor="@color/blue"
             android:textSize="25sp" />
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:id="@+id/recycler"/>
 
-            <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
-                android:layout_width="0dp"
-                android:layout_height="55dp"
-                android:id="@+id/files"
-                android:layout_gravity="center"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_background"
-                android:gravity="center"
-                android:text="@string/files"
-                android:textColor="@color/blue"
-                android:textSize="25sp"
-                android:visibility="gone"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:id="@+id/exams"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:background="@drawable/button_background"
+            android:gravity="center"
+            android:text="@string/exams"
+            android:textColor="@color/blue"
+            android:textSize="25sp" />
 
-            <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
-                android:layout_width="0dp"
-                android:layout_height="55dp"
-                android:id="@+id/videos"
-                android:layout_gravity="center"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_background"
-                android:gravity="center"
-                android:text="@string/videos"
-                android:textColor="@color/blue"
-                android:textSize="25sp"
-                android:visibility="gone"/>
-
-        </LinearLayout>
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

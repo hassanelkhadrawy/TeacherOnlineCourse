@@ -63,7 +63,7 @@ public class FavouriteCourses extends Fragment {
     private void GetFivouriteCourses(){
 
         databaseReference= FirebaseDatabase.getInstance().getReference("CoursesFavourite").child(Commans.registerModel.getEmail().replace(".","Dot"));
-        recyclerAdapter=new FirebaseRecyclerAdapter<FAvouriteModel, CoursesAdapter>(FAvouriteModel.class,R.layout.course_item,CoursesAdapter.class,databaseReference) {
+        recyclerAdapter=new FirebaseRecyclerAdapter<FAvouriteModel, CoursesAdapter>(FAvouriteModel.class,R.layout.courses_item,CoursesAdapter.class,databaseReference) {
             @Override
             protected void populateViewHolder(final CoursesAdapter coursesAdapter, final FAvouriteModel fAvouriteModel, final int i) {
 

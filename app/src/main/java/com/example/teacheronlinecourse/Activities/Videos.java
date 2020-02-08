@@ -316,7 +316,7 @@ public class Videos extends YouTubeBaseActivity {
             protected void populateViewHolder(final FileAdapter fileAdapter, final FileModel fileModel, int i) {
 
 
-                fileAdapter.FileImage.setBackgroundResource(R.drawable.ic_ondemand_video_black_24dp);
+                fileAdapter.File.setBackgroundResource(R.drawable.ic_ondemand_video_black_24dp);
                 fileAdapter.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -391,18 +391,7 @@ public class Videos extends YouTubeBaseActivity {
 
     }
 
-    private void onYoutubeClicked(String youtubeUrl) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        try {
-            getPackageManager().getPackageInfo("com.google.android.youtube", 0);
-            intent.setPackage("com.google.android.youtube");
-            intent.setData(Uri.parse(youtubeUrl));
-        } catch (PackageManager.NameNotFoundException e) {
-            intent.setData(Uri.parse(youtubeUrl));
-        } finally {
-            startActivity(intent);
-        }
-    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

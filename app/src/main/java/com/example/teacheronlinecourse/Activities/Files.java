@@ -11,11 +11,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.teacheronlinecourse.Adapters.AddImageAdapter;
@@ -57,6 +57,7 @@ public class Files extends AppCompatActivity {
     private LinearLayout countainer;
     private RecyclerView recyclerFiles;
     private FirebaseRecyclerAdapter<FileModel, FileAdapter> adapter;
+    private RecyclerView recyclerVideos;
 
 
     @Override
@@ -69,6 +70,7 @@ public class Files extends AppCompatActivity {
         chapterID = savedInstanceState.getString("chapterID");
         initView();
         GetFiles();
+        GetVideos();
     }
 
     @Override
@@ -91,12 +93,13 @@ public class Files extends AppCompatActivity {
     public void SelectImage() {
 
         Intent intent = new Intent();
-        intent.setType("*/*");
+        intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         startActivityForResult(Intent.createChooser(intent, "select picture"), 1);
 
     }
+
     public void SelectVideo() {
 
         Intent intent = new Intent();
@@ -127,7 +130,7 @@ public class Files extends AppCompatActivity {
         addImageRecycler = (RecyclerView) view.findViewById(R.id.addImageRecycler);
         Addphoto = (TextView) view.findViewById(R.id._addphoto);
         Addfile = (TextView) view.findViewById(R.id._adddfile);
-        Addvideo=(TextView)view.findViewById(R.id._addvideo);
+        Addvideo = (TextView) view.findViewById(R.id._addvideo);
         cancleupload = (Comfortaa_Bold) view.findViewById(R.id.cancleupload);
         upLoadItem = (Comfortaa_Bold) view.findViewById(R.id.upLoadItem);
 
@@ -153,7 +156,7 @@ public class Files extends AppCompatActivity {
         Addvideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             SelectVideo();
+                SelectVideo();
             }
         });
 
@@ -193,7 +196,7 @@ public class Files extends AppCompatActivity {
                     for (int i = 0; i < clipData.getItemCount(); i++) {
                         saveuri = clipData.getItemAt(i).getUri();
 
-                        uriArrayList.add(new LoadFileModel(false,true,saveuri));
+                        uriArrayList.add(new LoadFileModel(false, true, saveuri));
 
                     }
 
@@ -202,7 +205,7 @@ public class Files extends AppCompatActivity {
 
 
                     saveuri = data.getData();
-                    uriArrayList.add(new LoadFileModel(false,true,saveuri));
+                    uriArrayList.add(new LoadFileModel(false, true, saveuri));
 
 
                 }
@@ -218,7 +221,7 @@ public class Files extends AppCompatActivity {
                         saveuri = clipData.getItemAt(i).getUri();
 
 
-                        uriArrayList.add(new LoadFileModel(false,false,saveuri));
+                        uriArrayList.add(new LoadFileModel(false, false, saveuri));
 
                     }
 
@@ -227,12 +230,12 @@ public class Files extends AppCompatActivity {
 
 
                     saveuri = data.getData();
-                    uriArrayList.add(new LoadFileModel(false,false,saveuri));
+                    uriArrayList.add(new LoadFileModel(false, false, saveuri));
 
 
                 }
 
-            }else if (requestCode == 3) {
+            } else if (requestCode == 3) {
                 uriArrayList = new ArrayList<>();
                 uriArrayList.clear();
                 ClipData clipData = data.getClipData();
@@ -242,7 +245,7 @@ public class Files extends AppCompatActivity {
                         saveuri = clipData.getItemAt(i).getUri();
 
 
-                        uriArrayList.add(new LoadFileModel(true,false,saveuri));
+                        uriArrayList.add(new LoadFileModel(true, false, saveuri));
 
                     }
 
@@ -251,7 +254,7 @@ public class Files extends AppCompatActivity {
 
 
                     saveuri = data.getData();
-                    uriArrayList.add(new LoadFileModel(true,false,saveuri));
+                    uriArrayList.add(new LoadFileModel(true, false, saveuri));
 
 
                 }
@@ -272,7 +275,6 @@ public class Files extends AppCompatActivity {
     }
 
 
-
     public void UploadItemData(final ArrayList<LoadFileModel> uriArrayList, final String catedory, final AlertDialog dialog) {
 
         Commans.progressDialog.show();
@@ -290,6 +292,7 @@ public class Files extends AppCompatActivity {
                 final StorageReference imageFolder = storageReference.child("images/" + imgName);
                 final int finalI = i;
                 final int finalI1 = i;
+                final int finalI2 = i;
                 imageFolder.putFile(uriArrayList.get(i).getUri())
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -297,20 +300,19 @@ public class Files extends AppCompatActivity {
                                 imageFolder.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
-                                        if (uriArrayList.get(finalI1).isVideo()){
-                                            FileModel fileModel = new FileModel(uri.toString(),uriArrayList.get(finalI1).isVideo());
+                                        if (uriArrayList.get(finalI1).isVideo()) {
+                                            FileModel fileModel = new FileModel(uri.toString(), true);
 
-                                            databaseReference.child(categoryName).child(courseID).child(chapterID).child("chpter_data").child("videos").child(String.valueOf(System.currentTimeMillis())).setValue(fileModel);
+                                            databaseReference.child(categoryName).child(courseID).child("Chapters").child(chapterID).child("chpter_videos").child(String.valueOf(System.currentTimeMillis())).setValue(fileModel);
 
+                                            Snackbar.make(countainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+                                        } else {
+                                            FileModel fileModel = new FileModel(uri.toString(), uriArrayList.get(finalI2).isImage());
 
-                                        }else {
-                                            FileModel fileModel = new FileModel(uri.toString(),uriArrayList.get(finalI1).isImage());
-
-                                            databaseReference.child(categoryName).child(courseID).child(chapterID).child("chpter_data").child(String.valueOf(System.currentTimeMillis())).setValue(fileModel);
+                                            databaseReference.child(categoryName).child(courseID).child("Chapters").child(chapterID).child("chpter_data").child(String.valueOf(System.currentTimeMillis())).setValue(fileModel);
 
 
                                         }
-
 
 
                                         if (finalI == uriArrayList.size() - 1) {
@@ -343,16 +345,20 @@ public class Files extends AppCompatActivity {
     private void initView() {
         countainer = (LinearLayout) findViewById(R.id.countainer);
         recyclerFiles = (RecyclerView) findViewById(R.id.recycler_files);
+        recyclerVideos = (RecyclerView) findViewById(R.id.recycler_videos);
     }
 
     private void GetFiles() {
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("CoursesData").child(categoryName).child(courseID).child(chapterID).child("chpter_data");
+        databaseReference = FirebaseDatabase.getInstance().getReference("CoursesData").child(categoryName).child(courseID).child("Chapters").child(chapterID).child("chpter_data");
         adapter = new FirebaseRecyclerAdapter<FileModel, FileAdapter>(FileModel.class, R.layout.file_item, FileAdapter.class, databaseReference) {
             @Override
             protected void populateViewHolder(FileAdapter fileAdapter, final FileModel fileModel, int i) {
 
-                Picasso.with(Files.this).load(fileModel.getFileUrl()).placeholder(R.drawable.pdfse).into(fileAdapter.FileImage);
+
+                fileAdapter.File.setText("File");
+
+                fileAdapter.File.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_attach_file_black_24dp, 0, 0, 0);
 
                 fileAdapter.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -367,8 +373,54 @@ public class Files extends AppCompatActivity {
             }
         };
         adapter.notifyDataSetChanged();
-        recyclerFiles.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerFiles.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         recyclerFiles.setAdapter(adapter);
+
+
+    }
+
+    private void GetVideos() {
+
+
+        databaseReference = FirebaseDatabase.getInstance().getReference("CoursesData").child(categoryName).child(courseID).child("Chapters").child(chapterID).child("chpter_videos");
+        adapter = new FirebaseRecyclerAdapter<FileModel, FileAdapter>(FileModel.class, R.layout.file_item, FileAdapter.class, databaseReference) {
+            @Override
+            protected void populateViewHolder(final FileAdapter fileAdapter, final FileModel fileModel, int i) {
+
+
+                fileAdapter.File.setText("Lecture");
+                fileAdapter.File.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_ondemand_video_black_24dp, 0, 0, 0);
+
+                fileAdapter.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (fileModel.isFlag()){
+                            Intent intent=new Intent(Files.this,PlayExoPlayerView.class);
+                            intent.putExtra("videoUrl",fileModel.getFileUrl());
+                            startActivity(intent);
+
+
+                        }else {
+
+
+                            Intent intent=new Intent(Files.this,PlayYoutubeVideo.class);
+                            intent.putExtra("videoUrl",fileModel.getFileUrl());
+                            startActivity(intent);
+
+
+
+
+                        }
+
+
+                    }
+                });
+            }
+        };
+        adapter.notifyDataSetChanged();
+        recyclerVideos.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        recyclerVideos.setAdapter(adapter);
 
 
     }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="261dp"
+        android:id="@+id/recycler_aadExam"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/questiontxt"
+        android:gravity="center"
+        android:hint="@string/question"
+        android:textSize="30sp"
+        android:layout_margin="5dp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/answertxt"
+        android:gravity="center"
+        android:hint="@string/answer"
+        android:textSize="30sp"
+        android:layout_margin="5dp"/>
+    <TextView
+        android:id="@+id/finalexam"
+        android:layout_width="148dp"
+        android:layout_height="55dp"
+        android:layout_gravity="end"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/button_background"
+        android:gravity="center"
+        android:text="@string/add"
+        android:textColor="@color/blue"
+        android:textSize="25sp" />
+
+</LinearLayout>

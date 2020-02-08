@@ -7,9 +7,15 @@
     android:layout_margin="10dp"
     app:cardCornerRadius="3dp">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:id="@+id/file_image"
-        android:scaleType="fitXY"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/file"
+            android:drawablePadding="10dp"
+            android:textSize="20sp"
+            android:text="Lecture"
+            android:layout_marginLeft="10dp"
+            android:gravity="center_vertical"/>
+
 </androidx.cardview.widget.CardView>

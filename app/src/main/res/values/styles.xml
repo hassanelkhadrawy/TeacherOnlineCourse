@@ -24,4 +24,13 @@
     <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/blue</item>
     </style>
+
+    <style name="BottomNavigationTheme" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/iconcolor</item>
+    </style>
+    <style name="RatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">@color/navigationbutoom</item>
+        <item name="colorControlActivated">@color/fillratingbar</item>
+    </style>
 </resources>

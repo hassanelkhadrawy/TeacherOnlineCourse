@@ -3,16 +3,14 @@ package com.example.teacheronlinecourse.Activities;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,10 +33,11 @@ public class ChaptersActivity extends AppCompatActivity {
     private Comfortaa_Bold cancleAddChapter;
     private Comfortaa_Bold uploadChapter;
     private DatabaseReference databaseReference;
-    private FirebaseRecyclerAdapter<ChaptersModel, ChapterAdapter>recyclerAdapter;
+    private FirebaseRecyclerAdapter<ChaptersModel, ChapterAdapter> recyclerAdapter;
     private String courseID, categoryName;
     private RecyclerView chaptersRecycler;
     private LinearLayout chaptersCountainer;
+    private TextView finalexam;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,17 +119,31 @@ public class ChaptersActivity extends AppCompatActivity {
     private void initView() {
         chaptersRecycler = (RecyclerView) findViewById(R.id.chaptersRecycler);
         chaptersCountainer = (LinearLayout) findViewById(R.id.chaptersCountainer);
+        finalexam = (TextView) findViewById(R.id.finalexam);
+        finalexam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent=new Intent(ChaptersActivity.this,Exams.class);
+                intent.putExtra("courseID",courseID);
+                intent.putExtra("categoryName",categoryName);
+                startActivity(intent);
+
+            }
+        });
     }
 
-    private void GetChapters(){
+    private void GetChapters() {
         databaseReference = FirebaseDatabase.getInstance().getReference().child("CoursesData").child(categoryName).child(courseID);
-        recyclerAdapter=new FirebaseRecyclerAdapter<ChaptersModel, ChapterAdapter>(ChaptersModel.class,R.layout.chapter_item,ChapterAdapter.class,databaseReference) {
+        recyclerAdapter = new FirebaseRecyclerAdapter<ChaptersModel, ChapterAdapter>(ChaptersModel.class, R.layout.chapter_item, ChapterAdapter.class, databaseReference) {
             @Override
-            protected void populateViewHolder(ChapterAdapter chapterAdapter, ChaptersModel chaptersModel, final int i) {
+            protected void populateViewHolder(final ChapterAdapter chapterAdapter, ChaptersModel chaptersModel, final int i) {
                 chapterAdapter.ChapterName.setText(chaptersModel.getChapter_name());
+                chapterAdapter.ChapterNum.setText(""+(i+1));
                 chapterAdapter.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        chapterAdapter.ChapterNum.setBackgroundResource(R.drawable.background_fillcircle);
                         Intent intent = new Intent(ChaptersActivity.this, Files.class);
                         intent.putExtra("courseID", courseID);
                         intent.putExtra("categoryName", categoryName);

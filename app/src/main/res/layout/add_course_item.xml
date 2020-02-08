@@ -27,6 +27,14 @@
             android:hint="@string/course_name"
             android:textSize="30sp"
             android:layout_margin="5dp"/>
+        <com.example.teacheronlinecourse.Fonts.Comfortaa_Regular
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/addCoursDescribtion"
+            android:gravity="center"
+            android:hint="@string/describtion"
+            android:textSize="30sp"
+            android:layout_margin="5dp"/>
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

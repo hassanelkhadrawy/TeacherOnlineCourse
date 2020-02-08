@@ -9,7 +9,16 @@
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false">
-        <activity android:name=".Activities.PlayYoutubeVideo"></activity>
+        <activity android:name=".Activities.ExamQuestion"></activity>
+        <activity
+            android:name=".Activities.PlayExoPlayerView"
+            android:label="Player"
+            android:theme="@style/FullScreen" />
+        <activity
+            android:name=".Activities.Exams"
+            android:label="Exams"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".Activities.PlayYoutubeVideo" />
         <activity
             android:name=".Activities.Videos"
             android:screenOrientation="portrait"
@@ -19,16 +28,20 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Activities.WebViewActivity"
+            android:label="pdf"
             android:theme="@style/FullScreen" />
         <activity
             android:name=".Activities.Files"
+            android:label="Files"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Activities.Courses"
+            android:label="Courses"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Activities.CourseInformation"
-            android:theme="@style/WithoutActionBar" />
+            android:label="Course Info"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".Activities.ChaptersActivity"
             android:theme="@style/AppTheme" />

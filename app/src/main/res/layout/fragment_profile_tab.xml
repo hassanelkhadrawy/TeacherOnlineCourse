@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background1"
     tools:context=".Activities.ProfileTab">
 
 
@@ -14,86 +13,73 @@
         android:gravity="center"
         android:id="@+id/prof_countainer">
 
-        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+        <TextView
             android:id="@+id/prof_Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Hassan"
             android:textSize="30sp"
-            android:textColor="@color/white"
-            android:layout_marginBottom="100dp"
-            android:layout_marginLeft="15dp"/>
-        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+            android:textColor="@color/black"
+            android:textStyle="bold"
+          android:gravity="center"/>
+        <TextView
             android:id="@+id/prof_Email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/email"
-            android:textColorHint="@color/white"
-            android:textSize="30sp"
-            android:textColor="@color/white"
-            android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
-            android:padding="10dp"/>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@drawable/view_background" />
-        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+            android:textColorHint="@color/black"
+            android:textSize="25sp"
+            android:textColor="@color/black"
+            android:padding="10dp"
+            android:gravity="center"
+            android:layout_marginBottom="100dp"
+            />
+
+        <TextView
             android:id="@+id/student"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/students"
-            android:textSize="30sp"
-            android:textColor="@color/white"
+            android:textSize="25sp"
+            android:textColor="@color/black"
             android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:padding="10dp"/>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@drawable/view_background" />
-        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+
+        <TextView
             android:id="@+id/setting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/setting"
-            android:textSize="30sp"
-            android:textColor="@color/white"
+            android:textSize="25sp"
+            android:textColor="@color/black"
             android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:padding="10dp"/>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@drawable/view_background" />
 
-        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+
+        <TextView
             android:id="@+id/addCourse"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add Course"
-            android:textSize="30sp"
-            android:textColor="@color/white"
+            android:textSize="25sp"
+            android:textColor="@color/black"
             android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:padding="10dp"
              />
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@drawable/view_background" />
 
 
-        <com.example.teacheronlinecourse.Fonts.Comfortaa_Bold
+
+        <TextView
             android:id="@+id/addcategory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add Category"
-            android:textSize="30sp"
-            android:textColor="@color/white"
+            android:textSize="25sp"
+            android:textColor="@color/black"
             android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:padding="10dp"
             />
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@drawable/view_background" />
+
 
     </LinearLayout>
 

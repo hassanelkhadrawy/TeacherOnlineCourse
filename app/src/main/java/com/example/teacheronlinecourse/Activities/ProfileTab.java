@@ -50,23 +50,24 @@ import static android.app.Activity.RESULT_OK;
 public class ProfileTab extends Fragment {
 
 
-    private Comfortaa_Bold profName;
-    private Comfortaa_Bold profEmail;
-    private Comfortaa_Bold student;
-    private Comfortaa_Bold setting;
-    private Comfortaa_Bold addCourse;
+    private TextView profName;
+    private TextView profEmail;
+    private TextView student;
+    private TextView setting;
+    private TextView addCourse;
     DatabaseReference databaseReference;
     StorageReference storageReference;
     private ImageButton addCourseImage;
     private Comfortaa_Regular addCourseName;
+    private Comfortaa_Regular addCourseDes;
     private Comfortaa_Bold cancleAddCourse;
     private Comfortaa_Bold uploadCourse;
     private Uri ImageUri;
     private LinearLayout profCountainer;
-    private Comfortaa_Regular addCategoryName;
+    private TextView addCategoryName;
     private Comfortaa_Bold cancleAddCategory;
     private Comfortaa_Bold uploadategory;
-    private Comfortaa_Bold addcategory;
+    private TextView addcategory;
     private Spinner categorySpinner;
     private ArrayAdapter<String> adapterCategory;
     ArrayList<String>categoryList=new ArrayList<>();
@@ -87,17 +88,20 @@ public class ProfileTab extends Fragment {
     }
 
     private void initView(View view) {
-        profName = (Comfortaa_Bold) view.findViewById(R.id.prof_Name);
-        profEmail = (Comfortaa_Bold) view.findViewById(R.id.prof_Email);
-        student = (Comfortaa_Bold) view.findViewById(R.id.student);
-        setting = (Comfortaa_Bold) view.findViewById(R.id.setting);
-        addCourse = (Comfortaa_Bold) view.findViewById(R.id.addCourse);
+        profName = view.findViewById(R.id.prof_Name);
+        profEmail =  view.findViewById(R.id.prof_Email);
+        student =  view.findViewById(R.id.student);
+        setting =  view.findViewById(R.id.setting);
+        addCourse =  view.findViewById(R.id.addCourse);
         profCountainer = (LinearLayout) view.findViewById(R.id.prof_countainer);
-        addcategory = (Comfortaa_Bold) view.findViewById(R.id.addcategory);
+        addcategory =  view.findViewById(R.id.addcategory);
         AddCAtegoryToList();
     }
 
     private void Action() {
+        profName.setText(Commans.registerModel.getName());
+        profEmail.setText(Commans.registerModel.getEmail());
+
 
         addCourse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +117,7 @@ public class ProfileTab extends Fragment {
                 AddCategoryDialog();
             }
         });
+
     }
 
     private void AddCourseDialog() {
@@ -120,6 +125,7 @@ public class ProfileTab extends Fragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.add_course_item, null);
         addCourseImage = (ImageButton) view.findViewById(R.id.add_course_image);
         addCourseName = (Comfortaa_Regular) view.findViewById(R.id.addCourseName);
+        addCourseDes = (Comfortaa_Regular) view.findViewById(R.id.addCoursDescribtion);
         cancleAddCourse = (Comfortaa_Bold) view.findViewById(R.id.cancleAddCourse);
         uploadCourse = (Comfortaa_Bold) view.findViewById(R.id.uploadCourse);
         categorySpinner = (Spinner) view.findViewById(R.id.categorySpinner);
@@ -293,7 +299,7 @@ public class ProfileTab extends Fragment {
                     storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            CourseModel courseModel = new CourseModel(uri.toString(), addCourseName.getText().toString(), courseID);
+                            CourseModel courseModel = new CourseModel(uri.toString(), addCourseName.getText().toString(),addCourseDes.getText().toString(), courseID);
                             databaseReference.child(String.valueOf(System.currentTimeMillis())).setValue(courseModel);
                             ImageUri = null;
                             dialog.dismiss();
@@ -313,7 +319,7 @@ public class ProfileTab extends Fragment {
                 }
             });
         } else {
-            CourseModel courseModel = new CourseModel("null", addCourseName.getText().toString(), courseID);
+            CourseModel courseModel = new CourseModel("null", addCourseName.getText().toString(),addCourseDes.getText().toString(), courseID);
             databaseReference.child(String.valueOf(System.currentTimeMillis())).setValue(courseModel);
             dialog.dismiss();
             Commans.progressDialog.dismiss();
