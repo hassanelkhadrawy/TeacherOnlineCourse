@@ -158,4 +158,9 @@ public class ChaptersActivity extends AppCompatActivity {
         chaptersRecycler.setAdapter(recyclerAdapter);
 
     }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

@@ -2,6 +2,7 @@ package com.example.teacheronlinecourse.Activities;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.teacheronlinecourse.Adapters.CategoryAdapter;
 import com.example.teacheronlinecourse.Adapters.CoursesAdapter;
+import com.example.teacheronlinecourse.Adapters.SliderAdapter;
 import com.example.teacheronlinecourse.Adapters.TopCoursesAdapter;
 import com.example.teacheronlinecourse.Commans.Commans;
 import com.example.teacheronlinecourse.Models.CategoryModel;
@@ -30,6 +32,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.smarteist.autoimageslider.IndicatorAnimations;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -59,6 +64,7 @@ public class HomeTab extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home_tab, container, false);
         initView(view);
+        SLider(view);
         GetCategory();
         retriveTopCourses();
         return view;
@@ -115,7 +121,7 @@ public class HomeTab extends Fragment {
 
                 recyclercourseAdapter=new FirebaseRecyclerAdapter<CourseModel, CoursesAdapter>(CourseModel.class,R.layout.course_item,CoursesAdapter.class,databaseReference2) {
                     @Override
-                    protected void populateViewHolder(final CoursesAdapter coursesAdapter, CourseModel courseModel, int position) {
+                    protected void populateViewHolder(final CoursesAdapter coursesAdapter, final CourseModel courseModel, int position) {
 
                         public_position=position;
 
@@ -161,6 +167,18 @@ public class HomeTab extends Fragment {
                         FavouriteFunction(coursesAdapter,courseModel.getCourse_id());
 
 
+                        coursesAdapter.courseImage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                Intent intent = new Intent(getActivity(), CourseInformation.class);
+                                intent.putExtra("categoryName",categoryModel.getName());
+                                intent.putExtra("courseID", courseModel.getCourse_id());
+                                intent.putExtra("courseImage", courseModel.getCourse_image());
+                                startActivity(intent);
+
+                            }
+                        });
                     }
                 };
 
@@ -222,6 +240,23 @@ public class HomeTab extends Fragment {
         });
 
 
+
+    }
+
+    private void SLider(View view){
+        SliderView sliderView =view.findViewById(R.id.imageSlider);
+
+        SliderAdapter adapter = new SliderAdapter(getActivity());
+
+        sliderView.setSliderAdapter(adapter);
+
+        sliderView.setIndicatorAnimation(IndicatorAnimations.WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
+        sliderView.setIndicatorSelectedColor(Color.WHITE);
+        sliderView.setIndicatorUnselectedColor(Color.GRAY);
+        sliderView.setScrollTimeInSec(2); //set scroll delay in seconds :
+        sliderView.startAutoCycle();
 
     }
 

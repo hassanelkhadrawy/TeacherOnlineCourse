@@ -143,4 +143,9 @@ public class ChaptersVideo extends AppCompatActivity {
         chaptersRecycler.setAdapter(recyclerAdapter);
 
     }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

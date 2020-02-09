@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="40dp"
             android:text="@string/regiser"
-            android:textColor="@color/navigationbutoom"
+            android:textColor="@color/blue"
             android:textSize="45sp" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -69,7 +69,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-
             android:textColorHint="@color/blue">
 
             <com.example.teacheronlinecourse.Fonts.Comfortaa_Regular
@@ -79,7 +78,6 @@
                 android:drawableEnd="@drawable/ic_perm_identity_black_24dp"
                 android:hint="@string/email"
                 android:inputType="textEmailAddress"
-                android:text="hassan.com"
                 android:textColor="@color/navigationbutoom"
                 android:textColorHint="@color/navigationbutoom"
                 android:textSize="23sp" />
@@ -99,7 +97,6 @@
                 android:drawableEnd="@drawable/ic_lock_outline_black_24dp"
                 android:hint="@string/password"
                 android:inputType="textEmailAddress"
-                android:text="jo"
                 android:textColor="@color/navigationbutoom"
                 android:textSize="23sp" />
 
@@ -111,11 +108,11 @@
             android:layout_height="55dp"
             android:layout_gravity="center"
             android:layout_marginTop="50dp"
-            android:background="@drawable/button_background"
+            android:background="@drawable/category_background"
             android:gravity="center"
             android:onClick="Register"
             android:text="@string/regiser"
-            android:textColor="@color/blue"
+            android:textColor="@color/navigationbutoom"
             android:textSize="25sp" />
 
 

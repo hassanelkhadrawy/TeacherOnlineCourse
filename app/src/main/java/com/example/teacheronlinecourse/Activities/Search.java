@@ -119,7 +119,7 @@ public class Search extends Fragment {
     }
 
     private void GetSearchResult(Query firebaseSearchQuery){
-        adapter = new FirebaseRecyclerAdapter<CourseModel, CoursesAdapter>(CourseModel.class, R.layout.course_item, CoursesAdapter.class, firebaseSearchQuery) {
+        adapter = new FirebaseRecyclerAdapter<CourseModel, CoursesAdapter>(CourseModel.class, R.layout.courses_item, CoursesAdapter.class, firebaseSearchQuery) {
             @Override
             protected void populateViewHolder(final CoursesAdapter coursesAdapter, final CourseModel courseModel, final int i) {
 

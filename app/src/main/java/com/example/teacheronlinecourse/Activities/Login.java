@@ -72,6 +72,7 @@ public class Login extends AppCompatActivity {
                             Commans.progressDialog.dismiss();
                             saveState();
                             startActivity(new Intent(Login.this, Home.class));
+                            finish();
 
                         }
                     }else {
@@ -134,6 +135,7 @@ public class Login extends AppCompatActivity {
                         Commans.registerModel = registerModel;
                         Commans.progressDialog.dismiss();
                         startActivity(new Intent(Login.this, Home.class));
+                        finish();
 
                     }
                 }else {
