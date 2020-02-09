@@ -67,14 +67,14 @@ public class FavouriteCourses extends Fragment {
             @Override
             protected void populateViewHolder(final CoursesAdapter coursesAdapter, final FAvouriteModel fAvouriteModel, final int i) {
 
-                    if (!fAvouriteModel.getCourse_image().equals("null")) {
-                        Picasso.with(getActivity()).load(fAvouriteModel.getCourse_image()).placeholder(R.drawable.ic_perm_identity_black_24dp).into(coursesAdapter.courseImage);
-                    } else {
-                        coursesAdapter.courseImage.setVisibility(View.GONE);
+                if (!fAvouriteModel.getCourse_image().equals("null")) {
+                    Picasso.with(getActivity()).load(fAvouriteModel.getCourse_image()).placeholder(R.drawable.ic_perm_identity_black_24dp).into(coursesAdapter.courseImage);
+                } else {
+                    coursesAdapter.courseImage.setVisibility(View.GONE);
 
-                    }
+                }
 
-                    coursesAdapter.CourseName.setText(fAvouriteModel.getCourse_image());
+                    coursesAdapter.CourseName.setText(fAvouriteModel.getCourse_name());
 
                     DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("CoursesRates");
                     databaseReference2.child(fAvouriteModel.getCourse_category()).child(recyclerAdapter.getRef(i).getKey()).addValueEventListener(new ValueEventListener() {

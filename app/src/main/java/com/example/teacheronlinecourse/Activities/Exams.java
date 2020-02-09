@@ -2,6 +2,7 @@ package com.example.teacheronlinecourse.Activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -169,12 +170,22 @@ public class Exams extends AppCompatActivity {
 
         adapter=new FirebaseRecyclerAdapter<ExamModel, FileAdapter>(ExamModel.class,R.layout.file_item,FileAdapter.class,databaseReference) {
             @Override
-            protected void populateViewHolder(FileAdapter fileAdapter, ExamModel examModel, int i) {
+            protected void populateViewHolder(FileAdapter fileAdapter, ExamModel examModel, final int i) {
 
-                fileAdapter.File.setText("Exam "+(i+1));
+                fileAdapter.File.setText("Exam "+(i+1)+"\n");
 
                 fileAdapter.File.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_create_black_24dp, 0, 0, 0);
 
+                fileAdapter.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent=new Intent(Exams.this,ExamQuestion.class);
+                        intent.putExtra("courseID",CourseID);
+                        intent.putExtra("categoryName",CategoryName);
+                        intent.putExtra("ExamID",adapter.getRef(i).getKey());
+                        startActivity(intent);
+                    }
+                });
 
             }
         };

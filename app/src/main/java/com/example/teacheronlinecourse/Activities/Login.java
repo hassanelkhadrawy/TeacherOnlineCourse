@@ -1,6 +1,8 @@
 package com.example.teacheronlinecourse.Activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -32,6 +34,7 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         initView();
+        autoLogin();
     }
 
     public void Login(View view) {
@@ -50,13 +53,12 @@ public class Login extends AppCompatActivity {
 
 
         }else {
-            Commans.Prograss(Login.this,getString(R.string.waiting));
             Commans.progressDialog.show();
 
             final String Email = loginEmail.getText().toString();
             final String Password = loginPassword.getText().toString();
 
-            databaseReference = FirebaseDatabase.getInstance().getReference("Teachers");
+            databaseReference = FirebaseDatabase.getInstance().getReference("Users");
             databaseReference.child(Email.replace(".", "Dot")).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -68,6 +70,7 @@ public class Login extends AppCompatActivity {
 
                             Commans.registerModel = registerModel;
                             Commans.progressDialog.dismiss();
+                            saveState();
                             startActivity(new Intent(Login.this, Home.class));
 
                         }
@@ -102,10 +105,62 @@ public class Login extends AppCompatActivity {
         loginCountainer = (ConstraintLayout) findViewById(R.id.loginCountainer);
         loginEmail = (Comfortaa_Regular) findViewById(R.id.loginEmail);
         loginPassword = (Comfortaa_Regular) findViewById(R.id.loginPassword);
+        Commans.Prograss(Login.this,getString(R.string.waiting));
+
     }
 
     public void CreatAccount(View view) {
         startActivity(new Intent(Login.this, Registration.class));
         finish();
+    }
+
+    private void autoLogin(){
+        Commans.progressDialog.show();
+
+        SharedPreferences aSharedPreferences = getSharedPreferences(
+                "Favourite", Context.MODE_PRIVATE);
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+        final String email=aSharedPreferences.getString("Email","null");
+        final String password=aSharedPreferences.getString("Password","null");
+        databaseReference.child(email.replace(".", "Dot")).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    RegisterModel registerModel = dataSnapshot.getValue(RegisterModel.class);
+
+                    if (email.equals(registerModel.getEmail()) && password.equals(registerModel.getPassword())) {
+
+
+                        Commans.registerModel = registerModel;
+                        Commans.progressDialog.dismiss();
+                        startActivity(new Intent(Login.this, Home.class));
+
+                    }
+                }else {
+                    Commans.progressDialog.dismiss();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                Commans.progressDialog.dismiss();
+                Snackbar.make(loginCountainer, "" + databaseError.getMessage(), Snackbar.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+    }
+
+    private void saveState() {
+        SharedPreferences aSharedPreferences =getSharedPreferences(
+                "Favourite", Context.MODE_PRIVATE);
+        SharedPreferences.Editor aSharedPreferencesEdit = aSharedPreferences
+                .edit();
+        aSharedPreferencesEdit.putString("Email", Commans.registerModel.getEmail());
+        aSharedPreferencesEdit.putString("Password", Commans.registerModel.getPassword());
+        aSharedPreferencesEdit.commit();
     }
 }

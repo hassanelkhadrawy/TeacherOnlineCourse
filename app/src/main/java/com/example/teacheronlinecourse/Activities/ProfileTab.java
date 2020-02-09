@@ -2,7 +2,9 @@ package com.example.teacheronlinecourse.Activities;
 
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -51,9 +53,10 @@ public class ProfileTab extends Fragment {
 
 
     private TextView profName;
+    private TextView profImage;
     private TextView profEmail;
-    private TextView student;
-    private TextView setting;
+    private TextView SinOut;
+    private TextView ExamScor;
     private TextView addCourse;
     DatabaseReference databaseReference;
     StorageReference storageReference;
@@ -89,12 +92,21 @@ public class ProfileTab extends Fragment {
 
     private void initView(View view) {
         profName = view.findViewById(R.id.prof_Name);
+        profImage=view.findViewById(R.id.prof_img);
         profEmail =  view.findViewById(R.id.prof_Email);
-        student =  view.findViewById(R.id.student);
-        setting =  view.findViewById(R.id.setting);
+        SinOut =  view.findViewById(R.id.sinout);
+        ExamScor =  view.findViewById(R.id.examscors);
         addCourse =  view.findViewById(R.id.addCourse);
         profCountainer = (LinearLayout) view.findViewById(R.id.prof_countainer);
         addcategory =  view.findViewById(R.id.addcategory);
+
+        profImage.setText("");
+        String x = Commans.registerModel.getName();
+        String[] myName = x.split(" ");
+        for (int i = 0; i < myName.length; i++) {
+            String s = myName[i];
+            profImage.append(""+s.charAt(0));
+        }
         AddCAtegoryToList();
     }
 
@@ -103,6 +115,20 @@ public class ProfileTab extends Fragment {
         profEmail.setText(Commans.registerModel.getEmail());
 
 
+        SinOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                saveState();
+            }
+        });
+
+        ExamScor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), ExamScors.class));
+            }
+        });
         addCourse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,6 +143,7 @@ public class ProfileTab extends Fragment {
                 AddCategoryDialog();
             }
         });
+
 
     }
 
@@ -185,13 +212,12 @@ public class ProfileTab extends Fragment {
     }
 
     private void AddCAtegoryToList() {
-        categoryList.clear();
         databaseReference=FirebaseDatabase.getInstance().getReference("Category");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
-
+                    categoryList.clear();
                     for (DataSnapshot categorySnapshot : dataSnapshot.getChildren()) {
                         CategoryModel categoryModel = categorySnapshot.getValue(CategoryModel.class);
                         categoryList.add(categoryModel.getName());
@@ -290,7 +316,7 @@ public class ProfileTab extends Fragment {
         String imgName = UUID.randomUUID().toString();
         databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(categorySpinner.getSelectedItem().toString());
         storageReference = FirebaseStorage.getInstance().getReference("images/"+imgName);
-        final String courseID = UUID.randomUUID().toString();
+        final String courseID = String.valueOf(System.currentTimeMillis());
 
         if (ImageUri != null) {
             storageReference.putFile(ImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -300,7 +326,7 @@ public class ProfileTab extends Fragment {
                         @Override
                         public void onSuccess(Uri uri) {
                             CourseModel courseModel = new CourseModel(uri.toString(), addCourseName.getText().toString(),addCourseDes.getText().toString(), courseID);
-                            databaseReference.child(String.valueOf(System.currentTimeMillis())).setValue(courseModel);
+                            databaseReference.child(courseID).setValue(courseModel);
                             ImageUri = null;
                             dialog.dismiss();
                             Commans.progressDialog.dismiss();
@@ -320,12 +346,21 @@ public class ProfileTab extends Fragment {
             });
         } else {
             CourseModel courseModel = new CourseModel("null", addCourseName.getText().toString(),addCourseDes.getText().toString(), courseID);
-            databaseReference.child(String.valueOf(System.currentTimeMillis())).setValue(courseModel);
+            databaseReference.child(courseID).setValue(courseModel);
             dialog.dismiss();
             Commans.progressDialog.dismiss();
             Snackbar.make(profCountainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
 
         }
 
+    }
+    private void saveState() {
+        SharedPreferences aSharedPreferences =getActivity().getSharedPreferences(
+                "Favourite", Context.MODE_PRIVATE);
+        SharedPreferences.Editor aSharedPreferencesEdit = aSharedPreferences
+                .edit();
+        aSharedPreferencesEdit.putString("Email", "");
+        aSharedPreferencesEdit.putString("Password", "");
+        aSharedPreferencesEdit.commit();
     }
 }

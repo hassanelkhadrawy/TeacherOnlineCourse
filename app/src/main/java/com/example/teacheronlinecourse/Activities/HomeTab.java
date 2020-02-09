@@ -21,6 +21,7 @@ import com.example.teacheronlinecourse.Adapters.TopCoursesAdapter;
 import com.example.teacheronlinecourse.Commans.Commans;
 import com.example.teacheronlinecourse.Models.CategoryModel;
 import com.example.teacheronlinecourse.Models.CourseModel;
+import com.example.teacheronlinecourse.Models.FAvouriteModel;
 import com.example.teacheronlinecourse.Models.RateModel;
 import com.example.teacheronlinecourse.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -38,6 +39,7 @@ public class HomeTab extends Fragment {
 
 
     private RecyclerView courseRecycler;
+    private int public_position;
     private DatabaseReference databaseReference;
     private FirebaseRecyclerAdapter<CategoryModel, TopCoursesAdapter> recyclerAdapter;
     private FirebaseRecyclerAdapter<CategoryModel, CategoryAdapter> categoryAdapter;
@@ -70,6 +72,7 @@ public class HomeTab extends Fragment {
 
     private void GetCategory(){
         databaseReference = FirebaseDatabase.getInstance().getReference("Category");
+
         categoryAdapter=new FirebaseRecyclerAdapter<CategoryModel, CategoryAdapter>(CategoryModel.class,R.layout.category_item,CategoryAdapter.class,databaseReference) {
             @Override
             protected void populateViewHolder(CategoryAdapter categoryAdapter, final CategoryModel categoryModel, int i) {
@@ -101,8 +104,6 @@ public class HomeTab extends Fragment {
     }
 
     private void retriveTopCourses() {
-        Commans.Prograss(getActivity(), getString(R.string.waiting));
-        Commans.progressDialog.show();
         databaseReference = FirebaseDatabase.getInstance().getReference("Category");
 
         recyclerAdapter = new FirebaseRecyclerAdapter<CategoryModel, TopCoursesAdapter>(CategoryModel.class, R.layout.top_course_item, TopCoursesAdapter.class, databaseReference) {
@@ -110,13 +111,16 @@ public class HomeTab extends Fragment {
             protected void populateViewHolder(final TopCoursesAdapter topcoursesAdapter, final CategoryModel categoryModel, final int i) {
 
                 topcoursesAdapter.TopText.setText("Top courses in "+categoryModel.getName());
-             databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(categoryModel.getName());
+              DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("Courses").child(categoryModel.getName());
 
-                recyclercourseAdapter=new FirebaseRecyclerAdapter<CourseModel, CoursesAdapter>(CourseModel.class,R.layout.course_item,CoursesAdapter.class,databaseReference) {
+                recyclercourseAdapter=new FirebaseRecyclerAdapter<CourseModel, CoursesAdapter>(CourseModel.class,R.layout.course_item,CoursesAdapter.class,databaseReference2) {
                     @Override
                     protected void populateViewHolder(final CoursesAdapter coursesAdapter, CourseModel courseModel, int position) {
 
+                        public_position=position;
+
                         if (!courseModel.getCourse_image().equals("null")) {
+
 //                    coursesAdapter.courseImage.setVisibility(View.VISIBLE);
                             Picasso.with(getActivity()).load(courseModel.getCourse_image()).placeholder(R.drawable.ic_perm_identity_black_24dp).into(coursesAdapter.courseImage);
                         } else {
@@ -124,31 +128,37 @@ public class HomeTab extends Fragment {
 
                         }
                         coursesAdapter.CourseName.setText(courseModel.getCourse_name());
+
+//                        Toast.makeText(getActivity(), ""+recyclercourseAdapter.getRef(position).getKey(), Toast.LENGTH_SHORT).show();
 //                        coursesAdapter.ratingBar.setVisibility(View.GONE);
 
-//                        DatabaseReference  databaseReference3 = FirebaseDatabase.getInstance().getReference("CoursesRates");
-//                        databaseReference3.child(categoryModel.getName()).child(recyclercourseAdapter.getRef(position).getKey()).addValueEventListener(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                RateModel rateModel;
-//                                float rate = 0;
-//
-//                                for (DataSnapshot rateSnapshot : dataSnapshot.getChildren()) {
-//                                    rateModel = rateSnapshot.getValue(RateModel.class);
-//                                    rate+=rateModel.getRate();
-//                                }
-//
-//                                rate=rate/dataSnapshot.getChildrenCount();
-//                                coursesAdapter.ratingBar.setRating(rate);
-//
-//                            }
-//
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                            }
-//                        });
+                        DatabaseReference  databaseReference3 = FirebaseDatabase.getInstance().getReference("CoursesRates");
+                        databaseReference3.child(categoryModel.getName()).child(courseModel.getCourse_id()).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                RateModel rateModel;
+                                float rate = 0;
 
+                                for (DataSnapshot rateSnapshot : dataSnapshot.getChildren()) {
+                                    rateModel = rateSnapshot.getValue(RateModel.class);
+                                    rate+=rateModel.getRate();
+                                }
+
+                                rate=rate/dataSnapshot.getChildrenCount();
+                                coursesAdapter.ratingBar.setRating(rate);
+
+
+
+                            }
+
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        FavouriteFunction(coursesAdapter,courseModel.getCourse_id());
 
 
                     }
@@ -157,7 +167,6 @@ public class HomeTab extends Fragment {
 
                 topcoursesAdapter.topRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
                 topcoursesAdapter.topRecycler.setAdapter(recyclercourseAdapter);
-                Commans.progressDialog.dismiss();
 
 
 
@@ -166,6 +175,7 @@ public class HomeTab extends Fragment {
         recyclerAdapter.notifyDataSetChanged();
         courseRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         courseRecycler.setAdapter(recyclerAdapter);
+
 //        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 //            @Override
 //            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -184,4 +194,35 @@ public class HomeTab extends Fragment {
 
 
     }
+
+    private void FavouriteFunction(final CoursesAdapter coursesAdapter ,String CourseID){
+        databaseReference = FirebaseDatabase.getInstance().getReference("CoursesFavourite").child(Commans.registerModel.getEmail().replace(".", "Dot")).child(CourseID);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    FAvouriteModel fAvouriteModel = dataSnapshot.getValue(FAvouriteModel.class);
+                    if (fAvouriteModel.isFavourite()) {
+                        coursesAdapter.favourite.setImageResource(R.drawable.ic_favorite_black_24dp);
+                    } else {
+                        coursesAdapter.favourite.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+
+                    }
+
+                }else {
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+    }
+
 }

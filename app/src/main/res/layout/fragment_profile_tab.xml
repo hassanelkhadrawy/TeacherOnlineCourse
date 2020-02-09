@@ -14,6 +14,17 @@
         android:id="@+id/prof_countainer">
 
         <TextView
+            android:id="@+id/prof_img"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@drawable/background_fillcircle"
+            android:gravity="center"
+            android:text="Hassan"
+            android:textColor="@color/white"
+            android:textSize="40sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/prof_Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,24 +43,15 @@
             android:textColor="@color/black"
             android:padding="10dp"
             android:gravity="center"
-            android:layout_marginBottom="100dp"
+            android:layout_marginBottom="50dp"
             />
 
-        <TextView
-            android:id="@+id/student"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/students"
-            android:textSize="25sp"
-            android:textColor="@color/black"
-            android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
-            android:padding="10dp"/>
 
         <TextView
-            android:id="@+id/setting"
+            android:id="@+id/examscors"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/setting"
+            android:text="@string/exam_scors"
             android:textSize="25sp"
             android:textColor="@color/black"
             android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
@@ -80,6 +82,15 @@
             android:padding="10dp"
             />
 
+        <TextView
+            android:id="@+id/sinout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sign Out"
+            android:textSize="25sp"
+            android:textColor="@color/black"
+            android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:padding="10dp"/>
 
     </LinearLayout>
 

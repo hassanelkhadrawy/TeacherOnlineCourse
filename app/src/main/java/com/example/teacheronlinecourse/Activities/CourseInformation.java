@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,7 +45,7 @@ import java.util.UUID;
 public class CourseInformation extends AppCompatActivity {
 
     private ImageView courseImage;
-    private TextView courseNumchapter;
+    private TextView coursechapternum;
     private TextView courseDescription;
     private TextView enrol;
     private String courseID, courseImageUrl, categoryName;
@@ -76,7 +77,7 @@ public class CourseInformation extends AppCompatActivity {
 
     private void initView() {
         courseImage = (ImageView) findViewById(R.id.courseImage);
-        courseNumchapter = findViewById(R.id.course_num_chapter);
+        coursechapternum = findViewById(R.id.course_num_chapter);
         courseDescription = findViewById(R.id.descrition);
         enrol = findViewById(R.id.enrol);
         addRate = findViewById(R.id.addRate);
@@ -290,13 +291,15 @@ public class CourseInformation extends AppCompatActivity {
             @Override
             protected void populateViewHolder(final ChapterAdapter chapterAdapter, ChaptersModel chaptersModel, final int i) {
                 chapterAdapter.ChapterName.setText(chaptersModel.getChapter_name());
-                chapterAdapter.ChapterNum.setText("" + (i + 1));
-                courseNumchapter.setText((i + 1) + " Chapter");
+                chapterAdapter.ChapterNum.setText((i + 1)+"");
+                coursechapternum.setText((i + 1) + " Chapter");
+
 
 
                 int position = readState();
                 if (position >= i + 1) {
                     chapterAdapter.ChapterNum.setBackgroundResource(R.drawable.background_fillcircle);
+                    chapterAdapter.ChapterNum.setTextColor(Color.parseColor("#FFFFFF"));
                 }
 
                 chapterAdapter.itemView.setOnClickListener(new View.OnClickListener() {
@@ -306,6 +309,7 @@ public class CourseInformation extends AppCompatActivity {
                         int position = readState();
                         if (position <= i + 1) {
                             chapterAdapter.ChapterNum.setBackgroundResource(R.drawable.background_fillcircle);
+                            chapterAdapter.ChapterNum.setTextColor(Color.parseColor("#FFFFFF"));
                             saveState(i + 1);
 
                         }

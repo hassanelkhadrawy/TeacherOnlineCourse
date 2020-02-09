@@ -1,6 +1,8 @@
 package com.example.teacheronlinecourse.Activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -94,7 +96,7 @@ public class Registration extends AppCompatActivity {
     private void SendTeacherData(String Name, final String Email, String Password) {
 
         final RegisterModel registerModel = new RegisterModel(Name, Email, Password);
-        databaseReference = FirebaseDatabase.getInstance().getReference("Teachers");
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -104,9 +106,11 @@ public class Registration extends AppCompatActivity {
                     databaseReference.child(Email.replace(".", "Dot")).setValue(registerModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
+                            Commans.registerModel = registerModel;
                             Commans.progressDialog.dismiss();
                             Snackbar.make(registerCountainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
-                            Commans.registerModel = registerModel;
+                            saveState();
+                            startActivity(new Intent(Registration.this, Home.class));
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -129,6 +133,15 @@ public class Registration extends AppCompatActivity {
 
     }
 
+    private void saveState() {
+        SharedPreferences aSharedPreferences =getSharedPreferences(
+                "Favourite", Context.MODE_PRIVATE);
+        SharedPreferences.Editor aSharedPreferencesEdit = aSharedPreferences
+                .edit();
+        aSharedPreferencesEdit.putString("Email", Commans.registerModel.getEmail());
+        aSharedPreferencesEdit.putString("Password", Commans.registerModel.getPassword());
+        aSharedPreferencesEdit.commit();
+    }
     @Override
     public void onBackPressed() {
         super.onBackPressed();

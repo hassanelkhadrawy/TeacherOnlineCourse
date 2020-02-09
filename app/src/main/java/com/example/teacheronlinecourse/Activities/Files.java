@@ -356,7 +356,7 @@ public class Files extends AppCompatActivity {
             protected void populateViewHolder(FileAdapter fileAdapter, final FileModel fileModel, int i) {
 
 
-                fileAdapter.File.setText("File");
+                fileAdapter.File.setText("File \n");
 
                 fileAdapter.File.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_attach_file_black_24dp, 0, 0, 0);
 
@@ -388,7 +388,7 @@ public class Files extends AppCompatActivity {
             protected void populateViewHolder(final FileAdapter fileAdapter, final FileModel fileModel, int i) {
 
 
-                fileAdapter.File.setText("Lecture");
+                fileAdapter.File.setText("Lecture \n");
                 fileAdapter.File.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_ondemand_video_black_24dp, 0, 0, 0);
 
                 fileAdapter.itemView.setOnClickListener(new View.OnClickListener() {

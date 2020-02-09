@@ -143,6 +143,7 @@ public class Courses extends AppCompatActivity {
         recyclerAdapter.notifyDataSetChanged();
         coorsesRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         coorsesRecycler.setAdapter(recyclerAdapter);
+
         ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -164,7 +165,7 @@ public class Courses extends AppCompatActivity {
 
     private void AddFavouriteِ(CourseModel courseModel,int i) {
         databaseReference = FirebaseDatabase.getInstance().getReference("CoursesFavourite").child(Commans.registerModel.getEmail().replace(".", "Dot")).child(recyclerAdapter.getRef(i).getKey());
-        FAvouriteModel fAvouriteModel = new FAvouriteModel(true,courseModel.getCourse_name(),courseModel.getCourse_image(),CategoryName);
+        FAvouriteModel fAvouriteModel = new FAvouriteModel(true,courseModel.getCourse_image(),courseModel.getCourse_name(),CategoryName);
         databaseReference.setValue(fAvouriteModel);
 
     }

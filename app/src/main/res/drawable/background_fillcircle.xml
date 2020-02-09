@@ -3,7 +3,7 @@
     android:shape="oval">
     <size android:height="20dp"
         android:width="20dp"/>
-    <solid android:color="@color/blue"/>
+    <solid android:color="@color/navigationbutoom"/>
 
 
 
