@@ -63,7 +63,6 @@ public class Login extends AppCompatActivity {
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        autoLogin();
     }
     @Override
     protected void attachBaseContext(Context base) {
@@ -151,59 +150,7 @@ public class Login extends AppCompatActivity {
         finish();
     }
 
-    private void autoLogin() {
-        Commans.progressDialog.show();
 
-        SharedPreferences aSharedPreferences = getSharedPreferences(
-                "Favourite", Context.MODE_PRIVATE);
-        final String email = aSharedPreferences.getString("Email", "null");
-        final String password = aSharedPreferences.getString("Password", "null");
-
-        if (Commans.isConnectToInternet(this)) {
-            if (email.equals("null")) {
-                Commans.progressDialog.dismiss();
-
-            } else {
-
-                databaseReference = FirebaseDatabase.getInstance().getReference("Users");
-
-                databaseReference.child(email.replace(".", "Dot")).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            RegisterModel registerModel = dataSnapshot.getValue(RegisterModel.class);
-
-                            if (email.equals(registerModel.getEmail()) && password.equals(registerModel.getPassword())) {
-
-
-                                Commans.registerModel = registerModel;
-                                Commans.progressDialog.dismiss();
-                                startActivity(new Intent(Login.this, Home.class));
-                                finish();
-
-                            }
-                        } else {
-                            Commans.progressDialog.dismiss();
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        Commans.progressDialog.dismiss();
-                        Snackbar.make(loginCountainer, "" + databaseError.getMessage(), Snackbar.LENGTH_SHORT).show();
-
-
-                    }
-                });
-
-            }
-        }else {
-            Toast.makeText(this, R.string.check_internet, Toast.LENGTH_SHORT).show();
-        }
-
-    }
 
     private void saveState() {
         SharedPreferences aSharedPreferences = getSharedPreferences(
