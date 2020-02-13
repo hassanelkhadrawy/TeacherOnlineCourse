@@ -35,8 +35,7 @@ public class ExamScors extends AppCompatActivity {
 
     private void initView() {
         examScoreRecycler = (RecyclerView) findViewById(R.id.examScoreRecycler);
-         databaseReference = FirebaseDatabase.getInstance().getReference("UserCourses").child(Commans.registerModel.getEmail().replace(".", "Dot")).child("ExamsScors");
-        Toast.makeText(ExamScors.this, "cssa", Toast.LENGTH_SHORT).show();
+         databaseReference = FirebaseDatabase.getInstance().getReference("UserCoursesModel").child(Commans.registerModel.getEmail().replace(".", "Dot")).child("ExamsScors");
 
         adapter=new FirebaseRecyclerAdapter<ExamScoreModel, FileAdapter>(ExamScoreModel.class,R.layout.file_item,FileAdapter.class,databaseReference) {
             @Override
@@ -49,7 +48,6 @@ public class ExamScors extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         if (dataSnapshot.exists()){
-                            Toast.makeText(ExamScors.this, ""+databaseReference.toString(), Toast.LENGTH_SHORT).show();
                             CourseModel courseModel=dataSnapshot.getValue(CourseModel.class);
                             fileAdapter.File.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_attach_file_black_24dp, 0, 0, 0);
                             fileAdapter.File.setText("Quez "+(i + 1)+"\n" + "Course name: "+ courseModel.getCourse_name()+"\n"+ "Score: "+examScoreModel.getScore()  );
@@ -66,5 +64,11 @@ public class ExamScors extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         examScoreRecycler.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         examScoreRecycler.setAdapter(adapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

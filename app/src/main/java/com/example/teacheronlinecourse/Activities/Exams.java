@@ -57,6 +57,7 @@ public class Exams extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.add_menu, menu);
+        Commans.hidenAdd(menu);
         return true;
     }
 
@@ -195,5 +196,11 @@ public class Exams extends AppCompatActivity {
     }
     private void initView() {
         recyclerexam = (RecyclerView) findViewById(R.id.recyclerexam);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

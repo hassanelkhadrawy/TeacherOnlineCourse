@@ -29,7 +29,7 @@ import com.example.teacheronlinecourse.Fonts.Comfortaa_Regular;
 import com.example.teacheronlinecourse.Models.ChaptersModel;
 import com.example.teacheronlinecourse.Models.CourseModel;
 import com.example.teacheronlinecourse.Models.RateModel;
-import com.example.teacheronlinecourse.Models.UserCourses;
+import com.example.teacheronlinecourse.Models.UserCoursesModel;
 import com.example.teacheronlinecourse.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.material.snackbar.Snackbar;
@@ -48,9 +48,8 @@ public class CourseInformation extends AppCompatActivity {
     private TextView coursechapternum;
     private TextView courseDescription;
     private TextView enrol;
-    private String courseID, courseImageUrl, categoryName;
+    private String courseID, categoryName,courseName,courseImageUrl;
     private FirebaseRecyclerAdapter<ChaptersModel, ChapterAdapter> recyclerAdapter;
-    private String usercourseid;
     private DatabaseReference databaseReference;
     private TextView addRate;
     private RatingBar ratingBar2;
@@ -67,8 +66,8 @@ public class CourseInformation extends AppCompatActivity {
         setContentView(R.layout.activity_course_information);
         savedInstanceState = getIntent().getExtras();
         courseID = savedInstanceState.getString("courseID");
-        courseImageUrl = savedInstanceState.getString("courseImage");
         categoryName = savedInstanceState.getString("categoryName");
+
 
         initView();
         GetCourseInformation();
@@ -90,6 +89,7 @@ public class CourseInformation extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.add_menu, menu);
+        Commans.hidenAdd(menu);
         return true;
     }
 
@@ -161,7 +161,8 @@ public class CourseInformation extends AppCompatActivity {
                     final CourseModel courseModel = dataSnapshot.getValue(CourseModel.class);
                     Picasso.with(CourseInformation.this).load(courseModel.getCourse_image()).placeholder(R.drawable.ic_perm_identity_black_24dp).into(courseImage);
 
-                    usercourseid = courseModel.getCourse_id();
+                    courseName=courseModel.getCourse_name();
+                    courseImageUrl=courseModel.getCourse_image();
                     courseDescription.setText(courseModel.getCourse_descrition());
                     DatabaseReference databaseReferenceuser = FirebaseDatabase.getInstance().getReference("UserCourses");
                     databaseReferenceuser.child(Commans.registerModel.getEmail().replace(".", "Dot")).child("Enroled").addValueEventListener(new ValueEventListener() {
@@ -170,10 +171,11 @@ public class CourseInformation extends AppCompatActivity {
 
                             if (dataSnapshot.exists()) {
                                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                                    UserCourses userCourses = userSnapshot.getValue(UserCourses.class);
-                                    if (userCourses.getCourse_id().equals(courseModel.getCourse_id())) {
+                                    UserCoursesModel userCoursesModel = userSnapshot.getValue(UserCoursesModel.class);
+                                    if (userCoursesModel.getCourse_id().equals(courseModel.getCourse_id())) {
                                         enrol.setVisibility(View.GONE);
                                         recycler.setVisibility(View.VISIBLE);
+                                        exams.setVisibility(View.VISIBLE);
                                         GetChapters();
                                     }
                                 }
@@ -205,10 +207,13 @@ public class CourseInformation extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("UserCourses");
-                UserCourses userCourses = new UserCourses(categoryName, usercourseid);
-                databaseReference.child(Commans.registerModel.getEmail().replace(".", "Dot")).child("Enroled").child(String.valueOf(System.currentTimeMillis())).setValue(userCourses);
+                CourseModel courseModel=new CourseModel();
+                UserCoursesModel userCoursesModel = new UserCoursesModel(categoryName, courseID,courseName,courseImageUrl);
+                databaseReference.child(Commans.registerModel.getEmail().replace(".", "Dot")).child("Enroled").child(String.valueOf(System.currentTimeMillis())).setValue(userCoursesModel);
                 enrol.setVisibility(View.GONE);
                 recycler.setVisibility(View.VISIBLE);
+                exams.setVisibility(View.VISIBLE);
+
                 GetChapters();
             }
         });
@@ -341,5 +346,11 @@ public class CourseInformation extends AppCompatActivity {
         SharedPreferences aSharedPreferences = getSharedPreferences(
                 "Favourite", Context.MODE_PRIVATE);
         return aSharedPreferences.getInt(courseID, 0);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

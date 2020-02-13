@@ -10,6 +10,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/orange">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/search"
+                android:textSize="30sp"
+                android:layout_marginLeft="15dp"
+                android:textColor="@color/white"
+                android:layout_gravity="center"/>
+        </androidx.appcompat.widget.Toolbar>
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -19,7 +33,7 @@
     android:layout_margin="5dp"
     android:padding="5dp">
 
-    <com.example.teacheronlinecourse.Fonts.Comfortaa_Regular
+    <AutoCompleteTextView
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3"
@@ -27,6 +41,7 @@
         android:gravity="center"
         android:id="@+id/searchText"
         android:hint="@string/search"
+        android:textColor="@color/navigationbutoom"
         android:textSize="30sp"
         android:layout_margin="5dp"/>
 

@@ -30,4 +30,5 @@ public class MyBrowser extends WebViewClient {
         super.onPageFinished(view, url);
         Commans.progressDialog.dismiss();
     }
+
 }

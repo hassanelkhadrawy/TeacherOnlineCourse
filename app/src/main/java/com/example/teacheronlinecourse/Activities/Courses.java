@@ -35,7 +35,6 @@ public class Courses extends AppCompatActivity {
     private DatabaseReference databaseReference;
     String CategoryName;
     private RecyclerView coorsesRecycler;
-    private boolean isFavourite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +50,7 @@ public class Courses extends AppCompatActivity {
         Commans.Prograss(this, getString(R.string.waiting));
         databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(CategoryName);
 
-        recyclerAdapter = new FirebaseRecyclerAdapter<CourseModel, CoursesAdapter>(CourseModel.class, R.layout.courses_item,CoursesAdapter.class, databaseReference) {
+        recyclerAdapter = new FirebaseRecyclerAdapter<CourseModel, CoursesAdapter>(CourseModel.class, R.layout.courses_item, CoursesAdapter.class, databaseReference) {
             @Override
             protected void populateViewHolder(final CoursesAdapter coursesAdapter, final CourseModel courseModel, final int i) {
 
@@ -80,7 +79,6 @@ public class Courses extends AppCompatActivity {
                         coursesAdapter.ratingBar.setRating(rate);
 
 
-
                     }
 
 
@@ -91,8 +89,7 @@ public class Courses extends AppCompatActivity {
                 });
 
 
-                FavouriteFunction(coursesAdapter,i);
-
+                Commans.FavouriteFunction(databaseReference, coursesAdapter, courseModel.getCourse_id());
 
 
                 coursesAdapter.courseImage.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +99,6 @@ public class Courses extends AppCompatActivity {
                         Intent intent = new Intent(Courses.this, CourseInformation.class);
                         intent.putExtra("categoryName", CategoryName);
                         intent.putExtra("courseID", recyclerAdapter.getRef(i).getKey());
-                        intent.putExtra("courseImage", courseModel.getCourse_image());
                         startActivity(intent);
 
                     }
@@ -113,25 +109,24 @@ public class Courses extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
+                        boolean isFavourite;
 
                         isFavourite = readState();
                         if (isFavourite) {
                             coursesAdapter.favourite.setImageResource(R.drawable.ic_favorite_black_24dp);
                             isFavourite = false;
-                            AddFavouriteِ(courseModel,i);
+                            AddFavouriteِ(courseModel, i);
                             saveState(isFavourite);
 
 
                         } else {
                             coursesAdapter.favourite.setImageResource(R.drawable.ic_favorite_border_black_24dp);
                             isFavourite = true;
-                            DeleteFavouriteِ(courseModel,i);
+                            DeleteFavouriteِ(courseModel, i);
                             saveState(isFavourite);
 
 
                         }
-
-
 
 
                     }
@@ -143,33 +138,18 @@ public class Courses extends AppCompatActivity {
         recyclerAdapter.notifyDataSetChanged();
         coorsesRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         coorsesRecycler.setAdapter(recyclerAdapter);
-
-        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
-                int position = viewHolder.getAdapterPosition();
-                recyclerAdapter.getRef(position).removeValue();
-
-            }
-        });
-        helper.attachToRecyclerView(coorsesRecycler);
-
+        Commans.RemoveCourse(recyclerAdapter,coorsesRecycler);
 
     }
 
-    private void AddFavouriteِ(CourseModel courseModel,int i) {
+    private void AddFavouriteِ(CourseModel courseModel, int i) {
         databaseReference = FirebaseDatabase.getInstance().getReference("CoursesFavourite").child(Commans.registerModel.getEmail().replace(".", "Dot")).child(recyclerAdapter.getRef(i).getKey());
-        FAvouriteModel fAvouriteModel = new FAvouriteModel(true,courseModel.getCourse_image(),courseModel.getCourse_name(),CategoryName);
+        FAvouriteModel fAvouriteModel = new FAvouriteModel(true, courseModel.getCourse_image(), courseModel.getCourse_name(), CategoryName);
         databaseReference.setValue(fAvouriteModel);
 
     }
-    private void DeleteFavouriteِ(CourseModel courseModel,int i) {
+
+    private void DeleteFavouriteِ(CourseModel courseModel, int i) {
         databaseReference = FirebaseDatabase.getInstance().getReference("CoursesFavourite").child(Commans.registerModel.getEmail().replace(".", "Dot")).child(recyclerAdapter.getRef(i).getKey());
         databaseReference.removeValue();
 
@@ -179,35 +159,8 @@ public class Courses extends AppCompatActivity {
     private void initView() {
         coorsesRecycler = (RecyclerView) findViewById(R.id.coorses_recycler);
     }
-    private void FavouriteFunction(final CoursesAdapter coursesAdapter ,int i){
-        databaseReference = FirebaseDatabase.getInstance().getReference("CoursesFavourite").child(Commans.registerModel.getEmail().replace(".", "Dot")).child(recyclerAdapter.getRef(i).getKey());
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    FAvouriteModel fAvouriteModel = dataSnapshot.getValue(FAvouriteModel.class);
-                    if (fAvouriteModel.isFavourite()) {
-                        coursesAdapter.favourite.setImageResource(R.drawable.ic_favorite_black_24dp);
-                    } else {
-                        coursesAdapter.favourite.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-
-                    }
-
-                }else {
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
 
-
-    }
 
     private void saveState(boolean isFavourite) {
         SharedPreferences aSharedPreferences = this.getSharedPreferences(
@@ -222,5 +175,11 @@ public class Courses extends AppCompatActivity {
         SharedPreferences aSharedPreferences = this.getSharedPreferences(
                 "Favourite", Context.MODE_PRIVATE);
         return aSharedPreferences.getBoolean("State", true);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

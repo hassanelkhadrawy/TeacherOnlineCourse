@@ -8,11 +8,17 @@
     android:gravity="center"
     android:padding="15dp"
     tools:context=".Activities.ExamQuestion">
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="3dp"
+    app:cardElevation="3dp">
 
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:layout_margin="3dp"
     android:id="@+id/countainerquestions">
 
     <TextView
@@ -22,6 +28,7 @@
         android:textSize="40sp"
         android:gravity="center"
         android:id="@+id/questiontext"
+        android:textColor="@color/navigationbutoom"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
         android:layout_marginBottom="100dp"/>
@@ -37,6 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20sp"
+            android:textColor="@color/navigationbutoom"
             android:text="RadioButton" />
 
         <RadioButton
@@ -44,6 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20sp"
+            android:textColor="@color/navigationbutoom"
             android:text="RadioButton" />
 
         <RadioButton
@@ -51,6 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20sp"
+            android:textColor="@color/navigationbutoom"
             android:text="RadioButton" />
     </RadioGroup>
     <Button
@@ -58,18 +68,23 @@
         android:layout_height="wrap_content"
         android:text="Next"
         android:layout_gravity="end"
+        android:textColor="@color/navigationbutoom"
         android:id="@+id/next"
-        android:background="@drawable/button_background"
+        android:background="@drawable/button_background_withborder"
         android:layout_marginTop="30sp"/>
 </LinearLayout>
+
+</androidx.cardview.widget.CardView>
+
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Start"
         android:layout_gravity="end"
+        android:textColor="@color/navigationbutoom"
         android:id="@+id/start"
-        android:background="@drawable/button_background"
+        android:background="@drawable/button_background_withborder"
         android:layout_marginTop="30sp"/>
 
 

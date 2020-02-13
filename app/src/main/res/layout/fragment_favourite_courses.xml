@@ -5,6 +5,20 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Activities.FavouriteCourses">
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/orange">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/favourite"
+            android:textSize="30sp"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/white"
+            android:layout_gravity="center"/>
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

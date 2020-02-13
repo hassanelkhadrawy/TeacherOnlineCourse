@@ -45,4 +45,12 @@
     <string name="describtion">Describtion</string>
     <string name="exams">Exams</string>
     <string name="exam_scors">Exam Scors</string>
+    <string name="password_wrong">Password wrong</string>
+    <string name="okaddadminemail">Ok,Add admin email</string>
+    <string name="enter_valid_email">Enter valid email</string>
+    <string name="Enter_Verfication_Code">Enter Verfication Code</string>
+    <string name="enter_code">Enter Code</string>
+    <string name="wrong_code">Wrong Code</string>
+    <string name="emailexist">Email aready exist</string>
+    <string name="courses">Courses</string>
 </resources>

@@ -1,20 +1,30 @@
 package com.example.teacheronlinecourse.Activities;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,8 +36,11 @@ import androidx.fragment.app.Fragment;
 import com.example.teacheronlinecourse.Commans.Commans;
 import com.example.teacheronlinecourse.Fonts.Comfortaa_Bold;
 import com.example.teacheronlinecourse.Fonts.Comfortaa_Regular;
+import com.example.teacheronlinecourse.Models.AdminModel;
 import com.example.teacheronlinecourse.Models.CategoryModel;
 import com.example.teacheronlinecourse.Models.CourseModel;
+import com.example.teacheronlinecourse.Models.RateModel;
+import com.example.teacheronlinecourse.Models.SearchModel;
 import com.example.teacheronlinecourse.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -55,11 +68,13 @@ public class ProfileTab extends Fragment {
     private TextView profName;
     private TextView profImage;
     private TextView profEmail;
+    private TextView userCourses;
     private TextView SinOut;
     private TextView ExamScor;
     private TextView addCourse;
-    DatabaseReference databaseReference;
-    StorageReference storageReference;
+    private TextView addAdmin;
+    private DatabaseReference databaseReference;
+    private StorageReference storageReference;
     private ImageButton addCourseImage;
     private Comfortaa_Regular addCourseName;
     private Comfortaa_Regular addCourseDes;
@@ -73,7 +88,7 @@ public class ProfileTab extends Fragment {
     private TextView addcategory;
     private Spinner categorySpinner;
     private ArrayAdapter<String> adapterCategory;
-    ArrayList<String>categoryList=new ArrayList<>();
+    ArrayList<String> categoryList = new ArrayList<>();
 
     public ProfileTab() {
         // Required empty public constructor
@@ -85,30 +100,37 @@ public class ProfileTab extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile_tab, container, false);
+        hideKeyboard(getActivity());
         initView(view);
+        HideAdminItems();
         Action();
         return view;
     }
 
+
     private void initView(View view) {
         profName = view.findViewById(R.id.prof_Name);
-        profImage=view.findViewById(R.id.prof_img);
-        profEmail =  view.findViewById(R.id.prof_Email);
-        SinOut =  view.findViewById(R.id.sinout);
-        ExamScor =  view.findViewById(R.id.examscors);
-        addCourse =  view.findViewById(R.id.addCourse);
+        profImage = view.findViewById(R.id.prof_img);
+        profEmail = view.findViewById(R.id.prof_Email);
+        userCourses=view.findViewById(R.id.usercourses);
+        SinOut = view.findViewById(R.id.sinout);
+        ExamScor = view.findViewById(R.id.examscors);
+        addCourse = view.findViewById(R.id.addCourse);
+        addAdmin=view.findViewById(R.id.add_admin);
         profCountainer = (LinearLayout) view.findViewById(R.id.prof_countainer);
-        addcategory =  view.findViewById(R.id.addcategory);
+        addcategory = view.findViewById(R.id.addcategory);
 
         profImage.setText("");
         String x = Commans.registerModel.getName();
         String[] myName = x.split(" ");
         for (int i = 0; i < myName.length; i++) {
             String s = myName[i];
-            profImage.append(""+s.charAt(0));
+            profImage.append("" + s.charAt(0));
         }
         AddCAtegoryToList();
     }
+
+
 
     private void Action() {
         profName.setText(Commans.registerModel.getName());
@@ -120,6 +142,8 @@ public class ProfileTab extends Fragment {
             public void onClick(View v) {
 
                 saveState();
+                startActivity(new Intent(getActivity(), Login.class));
+                getActivity().finish();
             }
         });
 
@@ -127,6 +151,12 @@ public class ProfileTab extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getActivity(), ExamScors.class));
+            }
+        });
+        userCourses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(),UserCourses.class));
             }
         });
         addCourse.setOnClickListener(new View.OnClickListener() {
@@ -141,6 +171,13 @@ public class ProfileTab extends Fragment {
             @Override
             public void onClick(View v) {
                 AddCategoryDialog();
+            }
+        });
+        addAdmin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddAdmin();
+
             }
         });
 
@@ -165,7 +202,6 @@ public class ProfileTab extends Fragment {
         final AlertDialog dialog = builder.create();
 
 
-
         adapterCategory = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, categoryList) {
             @NonNull
             @Override
@@ -177,7 +213,6 @@ public class ProfileTab extends Fragment {
             }
         };
         categorySpinner.setAdapter(adapterCategory);
-
 
 
         addCourseImage.setOnClickListener(new View.OnClickListener() {
@@ -212,11 +247,11 @@ public class ProfileTab extends Fragment {
     }
 
     private void AddCAtegoryToList() {
-        databaseReference=FirebaseDatabase.getInstance().getReference("Category");
+        databaseReference = FirebaseDatabase.getInstance().getReference("Category");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     categoryList.clear();
                     for (DataSnapshot categorySnapshot : dataSnapshot.getChildren()) {
                         CategoryModel categoryModel = categorySnapshot.getValue(CategoryModel.class);
@@ -315,7 +350,7 @@ public class ProfileTab extends Fragment {
     private void UploadCourseData(final AlertDialog dialog) {
         String imgName = UUID.randomUUID().toString();
         databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(categorySpinner.getSelectedItem().toString());
-        storageReference = FirebaseStorage.getInstance().getReference("images/"+imgName);
+        storageReference = FirebaseStorage.getInstance().getReference("images/" + imgName);
         final String courseID = String.valueOf(System.currentTimeMillis());
 
         if (ImageUri != null) {
@@ -325,8 +360,16 @@ public class ProfileTab extends Fragment {
                     storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            CourseModel courseModel = new CourseModel(uri.toString(), addCourseName.getText().toString(),addCourseDes.getText().toString(), courseID);
+
+                            CourseModel courseModel = new CourseModel(uri.toString(), addCourseName.getText().toString(), addCourseDes.getText().toString(), courseID);
                             databaseReference.child(courseID).setValue(courseModel);
+
+                            // add to search
+
+                            databaseReference = FirebaseDatabase.getInstance().getReference("Search");
+                            SearchModel searchModel = new SearchModel(categorySpinner.getSelectedItem().toString(), courseID, addCourseName.getText().toString());
+                            databaseReference.child(courseID).setValue(searchModel);
+
                             ImageUri = null;
                             dialog.dismiss();
                             Commans.progressDialog.dismiss();
@@ -345,8 +388,14 @@ public class ProfileTab extends Fragment {
                 }
             });
         } else {
-            CourseModel courseModel = new CourseModel("null", addCourseName.getText().toString(),addCourseDes.getText().toString(), courseID);
+            CourseModel courseModel = new CourseModel("null", addCourseName.getText().toString(), addCourseDes.getText().toString(), courseID);
             databaseReference.child(courseID).setValue(courseModel);
+            //  add to search
+
+            databaseReference = FirebaseDatabase.getInstance().getReference("Search");
+            SearchModel searchModel = new SearchModel(categorySpinner.getSelectedItem().toString(), courseID, addCourseName.getText().toString());
+            databaseReference.child(courseID).setValue(searchModel);
+
             dialog.dismiss();
             Commans.progressDialog.dismiss();
             Snackbar.make(profCountainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
@@ -354,13 +403,118 @@ public class ProfileTab extends Fragment {
         }
 
     }
+
     private void saveState() {
-        SharedPreferences aSharedPreferences =getActivity().getSharedPreferences(
+        SharedPreferences aSharedPreferences = getActivity().getSharedPreferences(
                 "Favourite", Context.MODE_PRIVATE);
         SharedPreferences.Editor aSharedPreferencesEdit = aSharedPreferences
                 .edit();
-        aSharedPreferencesEdit.putString("Email", "");
-        aSharedPreferencesEdit.putString("Password", "");
+        aSharedPreferencesEdit.putString("Email", "null");
+        aSharedPreferencesEdit.putString("Password", "null");
         aSharedPreferencesEdit.commit();
     }
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private void AddAdmin() {
+
+
+        final boolean[] Flag = {true};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final EditText editText=new EditText(getActivity());
+
+        editText.setHint(getString(R.string.enter_password));
+        editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(editText);
+
+
+        builder.setCancelable(false);
+        builder.setPositiveButton("Add", null);
+        builder.setNegativeButton("Cancel", null);
+        final AlertDialog mAlertDialog = builder.create();
+
+        mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialogInterface) {
+                Button Positive = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button Cancel = mAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                Positive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (Flag[0]) {
+
+                            if (!TextUtils.isEmpty(editText.getText().toString())) {
+
+                                if (Commans.registerModel.getPassword().equals(editText.getText().toString())) {
+                                    editText.setText("");
+                                    editText.setHint(R.string.okaddadminemail);
+                                    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                                    Flag[0] =false;
+
+                                }else {
+                                    Toast.makeText(getActivity(), R.string.password_wrong, Toast.LENGTH_SHORT).show();
+
+                                }
+                            } else {
+                                Toast.makeText(getActivity(), getString(R.string.enter_password), Toast.LENGTH_SHORT).show();
+
+                            }
+                        }else {
+                            if (!TextUtils.isEmpty(editText.getText().toString())){
+
+                                databaseReference = FirebaseDatabase.getInstance().getReference("Admins");
+                                AdminModel adminModel = new AdminModel(editText.getText().toString());
+                                databaseReference.child(String.valueOf(System.currentTimeMillis())).setValue(adminModel);
+                                Snackbar.make(profCountainer,getString(R.string.success),Snackbar.LENGTH_SHORT).show();
+                                mAlertDialog.dismiss();
+
+                            }else {
+                                Toast.makeText(getActivity(), getString(R.string.enter_email), Toast.LENGTH_SHORT).show();
+
+                            }
+                        }
+
+
+
+
+                    }
+                });
+
+                Cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mAlertDialog.dismiss();
+
+                    }
+                });
+            }
+        });
+
+        mAlertDialog.show();
+        mAlertDialog.getWindow().setBackgroundDrawableResource(R.drawable.button_background);
+
+
+    }
+
+    private void HideAdminItems(){
+        for (int i= 0;i<Commans.adminList.size();i++){
+            if (!Commans.registerModel.getEmail().equals(Commans.adminList.get(i))){
+                addAdmin.setVisibility(View.GONE);
+                addcategory.setVisibility(View.GONE);
+                addCourse.setVisibility(View.GONE);
+            }
+        }
+
+    }
+
 }

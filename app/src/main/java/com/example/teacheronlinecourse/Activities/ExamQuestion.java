@@ -1,7 +1,6 @@
 package com.example.teacheronlinecourse.Activities;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -14,10 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.teacheronlinecourse.Commans.Commans;
-import com.example.teacheronlinecourse.Models.CategoryModel;
 import com.example.teacheronlinecourse.Models.ExamModel;
 import com.example.teacheronlinecourse.Models.ExamScoreModel;
-import com.example.teacheronlinecourse.Models.UserCourses;
 import com.example.teacheronlinecourse.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -187,7 +184,7 @@ public class ExamQuestion extends AppCompatActivity {
     }
 
     private void SaveScore(){
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("UserCourses");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("UserCoursesModel");
         ExamScoreModel examScoreModel=new ExamScoreModel(CategoryName,CourseID,ExamID, Score +" from "+ examList.size() );
         databaseReference.child(Commans.registerModel.getEmail().replace(".", "Dot")).child("ExamsScors").child(String.valueOf(System.currentTimeMillis())).setValue(examScoreModel);
 
@@ -198,4 +195,6 @@ public class ExamQuestion extends AppCompatActivity {
         super.onBackPressed();
         finish();
     }
+
+
 }

@@ -43,14 +43,6 @@ public class WebViewActivity extends AppCompatActivity {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setBuiltInZoomControls(true);
         mWebView.getSettings().setDisplayZoomControls(false);
-//        mWebView.setWebChromeClient(new WebChromeClient());
-//        mWebView.setWebViewClient(new WebViewClient(){
-//            @Override
-//            public void onPageFinished(WebView view, String url) {
-//                mWebView.loadUrl("javascript:(function() { "+
-//                        "document.querySelector('[role=\"toolbar\"]').remove();})()");
-//            }
-//        });
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 
         try {
@@ -64,5 +56,10 @@ public class WebViewActivity extends AppCompatActivity {
         }else {
             mWebView.loadUrl("http://drive.google.com/viewerng/viewer?embedded=true&url=" + pdf_file);
         }
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

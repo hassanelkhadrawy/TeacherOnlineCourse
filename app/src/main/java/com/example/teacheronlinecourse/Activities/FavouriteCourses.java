@@ -114,7 +114,6 @@ public class FavouriteCourses extends Fragment {
                         Intent intent = new Intent(getActivity(), CourseInformation.class);
                         intent.putExtra("categoryName", fAvouriteModel.getCourse_category());
                         intent.putExtra("courseID", recyclerAdapter.getRef(i).getKey());
-                        intent.putExtra("courseImage", fAvouriteModel.getCourse_image());
                         startActivity(intent);
 
                     }
@@ -155,22 +154,6 @@ public class FavouriteCourses extends Fragment {
 
     }
 
-
-    private void AddFavouriteِ(FAvouriteModel fAvouriteModel,int i) {
-        databaseReference = FirebaseDatabase.getInstance().getReference("CoursesFavourite").child(Commans.registerModel.getEmail().replace(".", "Dot")).child(recyclerAdapter.getRef(i).getKey());
-        FAvouriteModel model = new FAvouriteModel(true,fAvouriteModel.getCourse_image(),fAvouriteModel.getCourse_name(),fAvouriteModel.getCourse_category());
-        databaseReference.setValue(model);
-
-    }
-    private void DeleteFavouriteِ(FAvouriteModel fAvouriteModel,int i) {
-//        databaseReference = FirebaseDatabase.getInstance().getReference("CoursesFavourite").child(Commans.registerModel.getEmail().replace(".", "Dot")).child(recyclerAdapter.getRef(i).getKey());
-//        databaseReference.removeValue();
-        recyclerAdapter.getRef(i).removeValue();
-
-        saveState(false);
-
-
-    }
 
     private void FavouriteFunction(final CoursesAdapter coursesAdapter ,int i){
         databaseReference = FirebaseDatabase.getInstance().getReference("CoursesFavourite").child(Commans.registerModel.getEmail().replace(".", "Dot")).child(recyclerAdapter.getRef(i).getKey());
@@ -213,4 +196,6 @@ public class FavouriteCourses extends Fragment {
                 "Favourite", Context.MODE_PRIVATE);
         return aSharedPreferences.getBoolean("State", true);
     }
+
+
 }

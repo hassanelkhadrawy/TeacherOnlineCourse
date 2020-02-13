@@ -1,12 +1,14 @@
 package com.example.teacheronlinecourse.Activities;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,7 +46,6 @@ public class HomeTab extends Fragment {
 
 
     private RecyclerView courseRecycler;
-    private int public_position;
     private DatabaseReference databaseReference;
     private FirebaseRecyclerAdapter<CategoryModel, TopCoursesAdapter> recyclerAdapter;
     private FirebaseRecyclerAdapter<CategoryModel, CategoryAdapter> categoryAdapter;
@@ -63,10 +64,12 @@ public class HomeTab extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home_tab, container, false);
+        hideKeyboard(getActivity());
         initView(view);
         SLider(view);
         GetCategory();
         retriveTopCourses();
+        Commans.GetAdmins(databaseReference);
         return view;
     }
 
@@ -123,11 +126,9 @@ public class HomeTab extends Fragment {
                     @Override
                     protected void populateViewHolder(final CoursesAdapter coursesAdapter, final CourseModel courseModel, int position) {
 
-                        public_position=position;
 
                         if (!courseModel.getCourse_image().equals("null")) {
 
-//                    coursesAdapter.courseImage.setVisibility(View.VISIBLE);
                             Picasso.with(getActivity()).load(courseModel.getCourse_image()).placeholder(R.drawable.ic_perm_identity_black_24dp).into(coursesAdapter.courseImage);
                         } else {
                             coursesAdapter.courseImage.setVisibility(View.GONE);
@@ -135,8 +136,7 @@ public class HomeTab extends Fragment {
                         }
                         coursesAdapter.CourseName.setText(courseModel.getCourse_name());
 
-//                        Toast.makeText(getActivity(), ""+recyclercourseAdapter.getRef(position).getKey(), Toast.LENGTH_SHORT).show();
-//                        coursesAdapter.ratingBar.setVisibility(View.GONE);
+
 
                         DatabaseReference  databaseReference3 = FirebaseDatabase.getInstance().getReference("CoursesRates");
                         databaseReference3.child(categoryModel.getName()).child(courseModel.getCourse_id()).addValueEventListener(new ValueEventListener() {
@@ -164,7 +164,7 @@ public class HomeTab extends Fragment {
                             }
                         });
 
-                        FavouriteFunction(coursesAdapter,courseModel.getCourse_id());
+                       Commans .FavouriteFunction(databaseReference,coursesAdapter,courseModel.getCourse_id());
 
 
                         coursesAdapter.courseImage.setOnClickListener(new View.OnClickListener() {
@@ -174,7 +174,6 @@ public class HomeTab extends Fragment {
                                 Intent intent = new Intent(getActivity(), CourseInformation.class);
                                 intent.putExtra("categoryName",categoryModel.getName());
                                 intent.putExtra("courseID", courseModel.getCourse_id());
-                                intent.putExtra("courseImage", courseModel.getCourse_image());
                                 startActivity(intent);
 
                             }
@@ -213,35 +212,6 @@ public class HomeTab extends Fragment {
 
     }
 
-    private void FavouriteFunction(final CoursesAdapter coursesAdapter ,String CourseID){
-        databaseReference = FirebaseDatabase.getInstance().getReference("CoursesFavourite").child(Commans.registerModel.getEmail().replace(".", "Dot")).child(CourseID);
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    FAvouriteModel fAvouriteModel = dataSnapshot.getValue(FAvouriteModel.class);
-                    if (fAvouriteModel.isFavourite()) {
-                        coursesAdapter.favourite.setImageResource(R.drawable.ic_favorite_black_24dp);
-                    } else {
-                        coursesAdapter.favourite.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-
-                    }
-
-                }else {
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-
-    }
 
     private void SLider(View view){
         SliderView sliderView =view.findViewById(R.id.imageSlider);
@@ -259,5 +229,17 @@ public class HomeTab extends Fragment {
         sliderView.startAutoCycle();
 
     }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
 
 }

@@ -9,9 +9,14 @@
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
-        <activity android:name=".Activities.ExamScors"
+        <activity android:name=".Activities.UserCourses"
+            android:label="Courses Enroled"
+            android:theme="@style/AppTheme"
+            ></activity>
+        <activity
+            android:name=".Activities.ExamScors"
             android:label="Exam Scors"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".Activities.ExamQuestion"
             android:label="Exam"
@@ -25,13 +30,6 @@
             android:label="Exams"
             android:theme="@style/AppTheme" />
         <activity android:name=".Activities.PlayYoutubeVideo" />
-        <activity
-            android:name=".Activities.Videos"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".Activities.ChaptersVideo"
-            android:theme="@style/AppTheme" />
         <activity
             android:name=".Activities.WebViewActivity"
             android:label="pdf"
@@ -53,8 +51,7 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Activities.Home"
-            android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/WithoutActionBar" />
         <activity
             android:name=".Activities.Registration"
             android:theme="@style/WithoutActionBar" />

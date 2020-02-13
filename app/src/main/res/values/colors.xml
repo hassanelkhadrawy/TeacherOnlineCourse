@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#F74747</color>
+    <color name="colorPrimary">#FF6969</color>
     <color name="colorPrimaryDark">#CC3C3C</color>
-    <color name="colorAccent">#F74747</color>
+    <color name="colorAccent">#FF6969</color>
     <color name="white">#ffffff</color>
     <color name="offwhite">#28464444</color>
     <color name="black">#000000</color>
     <color name="navigationbutoom">#363B44</color>
-    <color name="blue">#F74747</color>
+    <color name="orange">#FF6969</color>
     <color name="maincolor">#F3F2F2</color>
     <color name="iconcolor">#96FFFFFF</color>
     <color name="fillratingbar">#FFEB3B</color>

@@ -4,10 +4,13 @@ package com.example.teacheronlinecourse.Activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -25,6 +28,7 @@ import com.example.teacheronlinecourse.Fonts.Comfortaa_Regular;
 import com.example.teacheronlinecourse.Models.CategoryModel;
 import com.example.teacheronlinecourse.Models.CourseModel;
 import com.example.teacheronlinecourse.Models.RateModel;
+import com.example.teacheronlinecourse.Models.SearchModel;
 import com.example.teacheronlinecourse.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -45,13 +49,16 @@ public class Search extends Fragment {
 
 
     private Spinner searchSpinner;
-    private Comfortaa_Regular searchText;
+    private AutoCompleteTextView searchText;
     private ImageButton searh;
     private RecyclerView searchRecycler;
     private FirebaseRecyclerAdapter<CourseModel, CoursesAdapter> adapter;
     private DatabaseReference databaseReference;
-    private ArrayList<String> categoryList = new ArrayList<>();
+    private ArrayList<SearchModel> coursesList = new ArrayList<>();
+    private ArrayList<String> courses_name_list = new ArrayList<>();
+    private ArrayList<String> category_name_list = new ArrayList<>();
     private ArrayAdapter<String> adapterCategory;
+    private boolean Flage;
 
 
     public Search() {
@@ -65,7 +72,7 @@ public class Search extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         initView(view);
-        AddCAtegoryToList();
+        AddcoursenameToList();
         Action();
 
 
@@ -74,7 +81,7 @@ public class Search extends Fragment {
 
     private void initView(View view) {
         searchSpinner = (Spinner) view.findViewById(R.id.searchSpinner);
-        searchText = (Comfortaa_Regular) view.findViewById(R.id.searchText);
+        searchText = (AutoCompleteTextView) view.findViewById(R.id.searchText);
         searh = (ImageButton) view.findViewById(R.id.searh);
         searchRecycler = (RecyclerView) view.findViewById(R.id.searchRecycler);
     }
@@ -83,28 +90,55 @@ public class Search extends Fragment {
         searh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Search(searchText.getText().toString());
+                Flage=true;
+
+                Search(searchText.getText().toString(), searchSpinner.getSelectedItemPosition());
+
+            }
+        });
+        searchText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long rowId) {
+                String selection = (String) parent.getItemAtPosition(position);
+                int pos = -1;
+
+                for (int i = 0; i < courses_name_list.size(); i++) {
+                    if (courses_name_list.get(i).equals(selection)) {
+                        pos = i;
+                        break;
+                    }
+                }
+                Flage=false;
+                Search(searchText.getText().toString(), pos);
             }
         });
 
 
     }
 
-    private void Search(String searchtext) {
+    private void Search(String searchtext, final int position) {
         Commans.progressDialog.show();
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(searchSpinner.getSelectedItem().toString());
+
+       if (Flage){
+           databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(searchSpinner.getSelectedItem().toString());
+
+       }else {
+           databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(coursesList.get(position).getCategory_name());
+
+       }
+
         final Query firebaseSearchQuery = databaseReference.orderByChild("course_name").startAt(searchtext).endAt(searchtext + "\uf8ff");
 
         firebaseSearchQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue()!=null){
+                if (dataSnapshot.getValue() != null) {
 
-                    GetSearchResult(firebaseSearchQuery);
-                }else {
+                    GetSearchResult(firebaseSearchQuery, searchSpinner.getSelectedItem().toString());
+                } else {
                     Commans.progressDialog.dismiss();
-                    Toast.makeText(getActivity(), getString(R.string.not_found), Toast.LENGTH_SHORT).show();
 
 
                 }
@@ -118,11 +152,12 @@ public class Search extends Fragment {
 
     }
 
-    private void GetSearchResult(Query firebaseSearchQuery){
+    private void GetSearchResult(Query firebaseSearchQuery, final String CategoryNAme) {
+
+
         adapter = new FirebaseRecyclerAdapter<CourseModel, CoursesAdapter>(CourseModel.class, R.layout.courses_item, CoursesAdapter.class, firebaseSearchQuery) {
             @Override
             protected void populateViewHolder(final CoursesAdapter coursesAdapter, final CourseModel courseModel, final int i) {
-
 
 
                 if (!courseModel.getCourse_image().equals("null")) {
@@ -135,7 +170,7 @@ public class Search extends Fragment {
 
 
                 DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("CoursesRates");
-                databaseReference2.child(searchSpinner.getSelectedItem().toString()).child(adapter.getRef(i).getKey()).addValueEventListener(new ValueEventListener() {
+                databaseReference2.child(CategoryNAme).child(adapter.getRef(i).getKey()).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -161,15 +196,16 @@ public class Search extends Fragment {
                     }
                 });
 
+                Commans.FavouriteFunction(databaseReference, coursesAdapter, courseModel.getCourse_id());
+
 
                 coursesAdapter.courseImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
                         Intent intent = new Intent(getActivity(), CourseInformation.class);
-                        intent.putExtra("categoryName", searchSpinner.getSelectedItem().toString());
-                        intent.putExtra("courseID", adapter.getRef(i).getKey());
-                        intent.putExtra("courseImage", courseModel.getCourse_image());
+                        intent.putExtra("categoryName", CategoryNAme);
+                        intent.putExtra("courseID", courseModel.getCourse_id());
                         startActivity(intent);
 
                     }
@@ -182,35 +218,55 @@ public class Search extends Fragment {
         searchRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         searchRecycler.setAdapter(adapter);
     }
-    private void AddCAtegoryToList() {
+
+    private void AddcoursenameToList() {
         Commans.Prograss(getActivity(), getString(R.string.waiting));
         Commans.progressDialog.show();
-        categoryList.clear();
-        databaseReference = FirebaseDatabase.getInstance().getReference("Category");
+        courses_name_list.clear();
+        databaseReference = FirebaseDatabase.getInstance().getReference("Search");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
 
                     for (DataSnapshot categorySnapshot : dataSnapshot.getChildren()) {
-                        CategoryModel categoryModel = categorySnapshot.getValue(CategoryModel.class);
-                        categoryList.add(categoryModel.getName());
+                        SearchModel searchModel = categorySnapshot.getValue(SearchModel.class);
+                        courses_name_list.add(searchModel.getCourse_name());
+                        coursesList.add(new SearchModel(searchModel.getCategory_name(), searchModel.getCoueseID(), searchModel.getCourse_name()));
                     }
+                    AddListToAdapter(courses_name_list);
+                    searchText.setThreshold(1);
+                    searchText.setAdapter(adapterCategory);
 
-                    adapterCategory = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, categoryList) {
-                        @NonNull
+                    databaseReference = FirebaseDatabase.getInstance().getReference("Category");
+                    databaseReference.addValueEventListener(new ValueEventListener() {
                         @Override
-                        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                            View view = super.getView(position, convertView, parent);
-                            TextView tv = view.findViewById(android.R.id.text1);
-                            tv.setTextColor(Color.parseColor("#C3464444"));
-                            return view;
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            if (dataSnapshot.exists()) {
+
+                                for (DataSnapshot categorySnapshot : dataSnapshot.getChildren()) {
+                                    CategoryModel categoryModel = categorySnapshot.getValue(CategoryModel.class);
+                                    category_name_list.add(categoryModel.getName());
+
+                                }
+
+                                AddListToAdapter(category_name_list);
+                                searchSpinner.setAdapter(adapterCategory);
+                            }
                         }
-                    };
-                    searchSpinner.setAdapter(adapterCategory);
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+
+
 
                     Commans.progressDialog.dismiss();
-
 
 
                 }
@@ -224,6 +280,29 @@ public class Search extends Fragment {
         });
 
 
+
+
+
+
     }
 
+    private void AddListToAdapter(ArrayList<String> list) {
+
+        try {
+            adapterCategory = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list) {
+                @NonNull
+                @Override
+                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                    View view = super.getView(position, convertView, parent);
+                    TextView tv = view.findViewById(android.R.id.text1);
+                    tv.setTextColor(Color.parseColor("#C3464444"));
+                    return view;
+                }
+            };
+        } catch (Exception e) {
+            Log.d("error", e.getMessage());
+        }
+
+
+    }
 }
