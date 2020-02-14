@@ -123,7 +123,7 @@ public class Registration extends AppCompatActivity {
     private void SendUserData(String Name, final String Email, String Password) {
 
         Commans.progressDialog.show();
-        final RegisterModel registerModel = new RegisterModel(Name, Email, Password);
+        final RegisterModel registerModel = new RegisterModel(Name, Email, Password,"null");
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -268,7 +268,7 @@ public class Registration extends AppCompatActivity {
         });
 
         mAlertDialog.show();
-        mAlertDialog.getWindow().setBackgroundDrawableResource(R.drawable.button_background);
+        mAlertDialog.getWindow().setBackgroundDrawableResource(R.drawable.button_background_withborder);
 
 
     }

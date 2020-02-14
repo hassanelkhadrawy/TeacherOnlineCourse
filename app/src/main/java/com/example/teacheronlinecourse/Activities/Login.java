@@ -202,14 +202,14 @@ public class Login extends AppCompatActivity {
             String personEmail = acct.getEmail();
             String personId = acct.getId();
             Uri personPhoto = acct.getPhotoUrl();
-            SendUserData(personName,personEmail,personId);
+            SendUserData(personName,personEmail,personId,String.valueOf(personPhoto));
 
         }
     }
 
-    private void SendUserData(String Name, final String Email, String Password) {
+    private void SendUserData(String Name, final String Email, String Password,String Image) {
 
-        final RegisterModel registerModel = new RegisterModel(Name, Email, Password);
+        final RegisterModel registerModel = new RegisterModel(Name, Email, Password,Image);
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override

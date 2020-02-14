@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Activities.ProfileTab">
 
 
@@ -48,18 +49,29 @@
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="50dp"
+    >
 
-        <TextView
-            android:id="@+id/prof_img"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_marginTop="50dp"
-            android:background="@drawable/background_fillcircle"
-            android:gravity="center"
-            android:text="Hassan"
-            android:textColor="@color/white"
-            android:textSize="40sp"
-            android:textStyle="bold" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/proImage"
+        android:layout_width="150dp"
+        android:layout_height="150dp" />
+
+    <TextView
+        android:id="@+id/prof_img"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/background_fillcircle"
+        android:gravity="center"
+        android:text="Hassan"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+</RelativeLayout>
+
 
         <TextView
             android:id="@+id/prof_Name"
@@ -121,6 +133,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add Category"
+            android:textSize="25sp"
+            android:textColor="@color/black"
+            android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:padding="10dp"
+            />
+
+
+        <TextView
+            android:id="@+id/edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Edit"
             android:textSize="25sp"
             android:textColor="@color/black"
             android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"

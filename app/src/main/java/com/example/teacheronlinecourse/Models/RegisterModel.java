@@ -4,11 +4,13 @@ public class RegisterModel {
      String name;
      String email;
      String password;
+     String image;
 
-    public RegisterModel(String name, String email, String password) {
+    public RegisterModel(String name, String email, String password, String image) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.image = image;
     }
 
     public RegisterModel() {
@@ -36,5 +38,13 @@ public class RegisterModel {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

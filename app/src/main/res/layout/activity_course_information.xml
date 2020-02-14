@@ -13,13 +13,23 @@
         android:orientation="vertical"
         android:id="@+id/courseCountainer"
         >
-
-        <ImageView
-            android:id="@+id/courseImage"
+        <com.github.florent37.shapeofview.shapes.RoundRectView
             android:layout_width="match_parent"
             android:layout_height="278dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/image" />
+            android:elevation="4dp"
+            app:shape_roundRect_bottomLeftRadius="5dp"
+            app:shape_roundRect_bottomRightRadius="5dp"
+            >
+            <ImageView
+                android:id="@+id/courseImage"
+                android:layout_width="match_parent"
+                android:layout_height="278dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/image" />
+
+        </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+
 
 
         <LinearLayout

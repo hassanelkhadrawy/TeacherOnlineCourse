@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.Spinner;
@@ -40,6 +41,7 @@ import com.example.teacheronlinecourse.Models.AdminModel;
 import com.example.teacheronlinecourse.Models.CategoryModel;
 import com.example.teacheronlinecourse.Models.CourseModel;
 import com.example.teacheronlinecourse.Models.RateModel;
+import com.example.teacheronlinecourse.Models.RegisterModel;
 import com.example.teacheronlinecourse.Models.SearchModel;
 import com.example.teacheronlinecourse.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -53,6 +55,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -66,13 +69,17 @@ public class ProfileTab extends Fragment {
 
 
     private TextView profName;
-    private TextView profImage;
+    private TextView profImagetxt;
     private TextView profEmail;
     private TextView userCourses;
     private TextView SinOut;
     private TextView ExamScor;
     private TextView addCourse;
     private TextView addAdmin;
+    private TextView Edit;
+    private ImageView proImage;
+    private ImageView editProfImage;
+    private EditText editText;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
     private ImageButton addCourseImage;
@@ -110,32 +117,43 @@ public class ProfileTab extends Fragment {
 
     private void initView(View view) {
         profName = view.findViewById(R.id.prof_Name);
-        profImage = view.findViewById(R.id.prof_img);
+        profImagetxt = view.findViewById(R.id.prof_img);
         profEmail = view.findViewById(R.id.prof_Email);
-        userCourses=view.findViewById(R.id.usercourses);
+        userCourses = view.findViewById(R.id.usercourses);
         SinOut = view.findViewById(R.id.sinout);
         ExamScor = view.findViewById(R.id.examscors);
         addCourse = view.findViewById(R.id.addCourse);
-        addAdmin=view.findViewById(R.id.add_admin);
+        addAdmin = view.findViewById(R.id.add_admin);
+        Edit = view.findViewById(R.id.edit);
+        proImage = view.findViewById(R.id.proImage);
         profCountainer = (LinearLayout) view.findViewById(R.id.prof_countainer);
         addcategory = view.findViewById(R.id.addcategory);
 
-        profImage.setText("");
-        String x = Commans.registerModel.getName();
-        String[] myName = x.split(" ");
-        for (int i = 0; i < myName.length; i++) {
-            String s = myName[i];
-            profImage.append("" + s.charAt(0));
-        }
+
         AddCAtegoryToList();
     }
 
 
-
     private void Action() {
+
+        profImagetxt.setText("");
+        String x = Commans.registerModel.getName();
+        String[] myName = x.split(" ");
+        for (int i = 0; i < myName.length; i++) {
+            String s = myName[i];
+            profImagetxt.append("" + s.charAt(0));
+        }
+
         profName.setText(Commans.registerModel.getName());
         profEmail.setText(Commans.registerModel.getEmail());
+        if (Commans.registerModel.getImage().equals("null")) {
+            proImage.setVisibility(View.GONE);
+        } else {
+            profImagetxt.setVisibility(View.GONE);
+            proImage.setVisibility(View.VISIBLE);
+            Picasso.with(getActivity()).load(Commans.registerModel.getImage()).placeholder(R.drawable.ic_perm_identity_black_24dp).into(proImage);
 
+        }
 
         SinOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,7 +174,7 @@ public class ProfileTab extends Fragment {
         userCourses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(),UserCourses.class));
+                startActivity(new Intent(getActivity(), UserCourses.class));
             }
         });
         addCourse.setOnClickListener(new View.OnClickListener() {
@@ -171,6 +189,12 @@ public class ProfileTab extends Fragment {
             @Override
             public void onClick(View v) {
                 AddCategoryDialog();
+            }
+        });
+        Edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditALert();
             }
         });
         addAdmin.setOnClickListener(new View.OnClickListener() {
@@ -218,7 +242,7 @@ public class ProfileTab extends Fragment {
         addCourseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SelectImage();
+                SelectImage(1);
             }
         });
         uploadCourse.setOnClickListener(new View.OnClickListener() {
@@ -324,11 +348,11 @@ public class ProfileTab extends Fragment {
 
     }
 
-    private void SelectImage() {
+    private void SelectImage(int REQUEST_CODE) {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "select picture"), 1);
+        startActivityForResult(Intent.createChooser(intent, "select picture"), REQUEST_CODE);
 
     }
 
@@ -336,9 +360,14 @@ public class ProfileTab extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK && requestCode == 1) {
-            ImageUri = data.getData();
-            addCourseImage.setImageURI(ImageUri);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1) {
+                ImageUri = data.getData();
+                addCourseImage.setImageURI(ImageUri);
+            } else if (requestCode == 2) {
+                ImageUri = data.getData();
+                editProfImage.setImageURI(ImageUri);
+            }
 
         } else {
             Toast.makeText(getActivity(), "faild", Toast.LENGTH_SHORT).show();
@@ -413,6 +442,7 @@ public class ProfileTab extends Fragment {
         aSharedPreferencesEdit.putString("Password", "null");
         aSharedPreferencesEdit.commit();
     }
+
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
@@ -429,7 +459,7 @@ public class ProfileTab extends Fragment {
 
         final boolean[] Flag = {true};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final EditText editText=new EditText(getActivity());
+        final EditText editText = new EditText(getActivity());
 
         editText.setHint(getString(R.string.enter_password));
         editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -459,9 +489,9 @@ public class ProfileTab extends Fragment {
                                     editText.setText("");
                                     editText.setHint(R.string.okaddadminemail);
                                     editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-                                    Flag[0] =false;
+                                    Flag[0] = false;
 
-                                }else {
+                                } else {
                                     Toast.makeText(getActivity(), R.string.password_wrong, Toast.LENGTH_SHORT).show();
 
                                 }
@@ -469,22 +499,20 @@ public class ProfileTab extends Fragment {
                                 Toast.makeText(getActivity(), getString(R.string.enter_password), Toast.LENGTH_SHORT).show();
 
                             }
-                        }else {
-                            if (!TextUtils.isEmpty(editText.getText().toString())){
+                        } else {
+                            if (!TextUtils.isEmpty(editText.getText().toString())) {
 
                                 databaseReference = FirebaseDatabase.getInstance().getReference("Admins");
                                 AdminModel adminModel = new AdminModel(editText.getText().toString());
                                 databaseReference.child(String.valueOf(System.currentTimeMillis())).setValue(adminModel);
-                                Snackbar.make(profCountainer,getString(R.string.success),Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(profCountainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
                                 mAlertDialog.dismiss();
 
-                            }else {
+                            } else {
                                 Toast.makeText(getActivity(), getString(R.string.enter_email), Toast.LENGTH_SHORT).show();
 
                             }
                         }
-
-
 
 
                     }
@@ -506,14 +534,127 @@ public class ProfileTab extends Fragment {
 
     }
 
-    private void HideAdminItems(){
-        for (int i= 0;i<Commans.adminList.size();i++){
-            if (!Commans.registerModel.getEmail().equals(Commans.adminList.get(i))){
+    private void HideAdminItems() {
+        for (int i = 0; i < Commans.adminList.size(); i++) {
+            if (!Commans.registerModel.getEmail().equals(Commans.adminList.get(i))) {
                 addAdmin.setVisibility(View.GONE);
                 addcategory.setVisibility(View.GONE);
                 addCourse.setVisibility(View.GONE);
             }
         }
+
+    }
+
+    private void EditALert() {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_item, null);
+        editProfImage = view.findViewById(R.id.editprofImage);
+        ImageView SelectImage = view.findViewById(R.id.selecteditprofImage);
+        editText = view.findViewById(R.id.editName);
+
+        if (!Commans.registerModel.getImage().equals("null")) {
+            Picasso.with(getActivity()).load(Commans.registerModel.getImage()).placeholder(R.drawable.ic_perm_identity_black_24dp).into(editProfImage);
+
+        }
+
+        editText.setText(Commans.registerModel.getName());
+        builder.setView(view);
+
+        SelectImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SelectImage(2);
+            }
+        });
+
+        builder.setCancelable(false);
+        builder.setPositiveButton("OK", null);
+        builder.setNegativeButton("Cancel", null);
+        final AlertDialog mAlertDialog = builder.create();
+
+        mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialogInterface) {
+                Button Positive = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button Cancel = mAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                Positive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!editText.getText().toString().isEmpty()) {
+
+                            String imgName = UUID.randomUUID().toString();
+                            storageReference = FirebaseStorage.getInstance().getReference("images/" + imgName);
+                            final String courseID = String.valueOf(System.currentTimeMillis());
+
+                            if (ImageUri != null) {
+                                storageReference.putFile(ImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri uri) {
+
+                                                databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(Commans.registerModel.getEmail().replace(".", "Dot"));
+                                                RegisterModel registerModel = new RegisterModel(editText.getText().toString(), Commans.registerModel.getEmail(), Commans.registerModel.getPassword(), String.valueOf(uri.toString()));
+                                                databaseReference.setValue(registerModel);
+                                                Commans.registerModel = registerModel;
+
+                                                ImageUri = null;
+                                                mAlertDialog.dismiss();
+                                                Commans.progressDialog.dismiss();
+                                                Snackbar.make(profCountainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+
+                                            }
+                                        });
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+
+                                        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(Commans.registerModel.getEmail().replace(".", "Dot"));
+                                        RegisterModel registerModel = new RegisterModel(editText.getText().toString(), Commans.registerModel.getEmail(), Commans.registerModel.getPassword(), Commans.registerModel.getImage());
+                                        databaseReference.setValue(registerModel);
+                                        Commans.registerModel = registerModel;
+                                        mAlertDialog.dismiss();
+                                        Commans.progressDialog.dismiss();
+                                        Snackbar.make(profCountainer, "" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+
+                                    }
+                                });
+                            } else {
+
+                                databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(Commans.registerModel.getEmail().replace(".", "Dot"));
+                                RegisterModel registerModel = new RegisterModel(editText.getText().toString(), Commans.registerModel.getEmail(), Commans.registerModel.getPassword(), Commans.registerModel.getImage());
+                                databaseReference.setValue(registerModel);
+                                Commans.registerModel = registerModel;
+                                mAlertDialog.dismiss();
+                                Commans.progressDialog.dismiss();
+                                Snackbar.make(profCountainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+
+                            }
+
+
+                        }
+
+                    }
+                });
+
+                Cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mAlertDialog.dismiss();
+
+                    }
+                });
+            }
+        });
+
+        mAlertDialog.show();
+        mAlertDialog.getWindow().setBackgroundDrawableResource(R.drawable.button_background_withborder);
+
 
     }
 
