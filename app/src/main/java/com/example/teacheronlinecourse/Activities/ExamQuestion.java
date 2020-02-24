@@ -3,6 +3,7 @@ package com.example.teacheronlinecourse.Activities;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -34,13 +35,13 @@ public class ExamQuestion extends AppCompatActivity {
     private RadioButton radioans3;
     private RadioButton publicradioButton;
     private Button next;
-    private String ExamID,CourseID, CategoryName;
+    private String ExamID, CourseID, CategoryName;
     private DatabaseReference databaseReference;
     ArrayList<ExamModel> examList = new ArrayList<>();
     private LinearLayout countainerquestions;
     private Button start;
     int COUNT = 0;
-    int Score=0;
+    int Score = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,62 +68,51 @@ public class ExamQuestion extends AppCompatActivity {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                countainerquestions.setVisibility(View.VISIBLE);
-                start.setVisibility(View.GONE);
 
-                Random rand = new Random();
-                int a = rand.nextInt(2 - 0);
-                int Answer2 = rand.nextInt(examList.size() - 0);
-                int Answer3 = rand.nextInt(examList.size() - 0);
                 if (!examList.isEmpty()) {
-                    if (Answer2 != 0 && Answer3 != 0) {
-                    Question(a,Answer2,Answer3);
-
-                    }else {
-                        Answer2 = rand.nextInt(examList.size() - 0);
-                        Answer3 = rand.nextInt(examList.size() - 0);
-                        Question(a,Answer2,Answer3);
-
-                    }
+                    countainerquestions.setVisibility(View.VISIBLE);
+                    start.setVisibility(View.GONE);
+                    next.setVisibility(View.GONE);
+                    Question();
 
                 }
+            }
+        });
+
+
+
+
+
+        radiogroub.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                next.setVisibility(View.VISIBLE);
+
             }
         });
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                publicradioButton=findViewById(radiogroub.getCheckedRadioButtonId());
+                publicradioButton = findViewById(radiogroub.getCheckedRadioButtonId());
 
 
-                if (examList.get(COUNT).getAnswer().equals(publicradioButton.getText().toString())){
+                if (examList.get(COUNT).getAnswer_1().equals(publicradioButton.getText().toString())) {
 
                     Score++;
                 }
-                if (publicradioButton.isChecked()){
-                    publicradioButton.setChecked(false);
 
-                }
+                radiogroub.clearCheck();
+                next.setVisibility(View.GONE);
 
                 COUNT++;
-                if (COUNT!=examList.size()){
-                    Random rand = new Random();
-                    int a = rand.nextInt(2 - 0);
-                    int Answer2 = rand.nextInt(examList.size() - 0);
-                    int Answer3 = rand.nextInt(examList.size() - 0);
+                if (COUNT != examList.size()) {
 
-                    if (Answer2 != COUNT && Answer3 != COUNT) {
-                        Question(a,Answer2,Answer3);
+                    Question();
 
-                    }else {
-                        Answer2 = rand.nextInt(examList.size() - 0);
-                        Answer3 = rand.nextInt(examList.size() - 0);
-                        Question(a,Answer2,Answer3);
-
-                    }
-                }else {
+                } else {
                     next.setVisibility(View.GONE);
                     SaveScore();
-                    questiontext.setText( Score +" from "+ examList.size() );
+                    questiontext.setText(Score + " from " + examList.size());
                     radiogroub.setVisibility(View.GONE);
                 }
 
@@ -131,26 +121,24 @@ public class ExamQuestion extends AppCompatActivity {
 
     }
 
-    private void Question(int a,int Answer2,int Answer3){
+    private void Question() {
+        Random rand = new Random();
+        int a = rand.nextInt(2 - 0);
         questiontext.setText(examList.get(COUNT).getQuestion());
-
         if (a == 0) {
+            radioans1.setText(examList.get(COUNT).getAnswer_1());
+            radioans2.setText(examList.get(COUNT).getWrong_answer_2());
+            radioans3.setText(examList.get(COUNT).getWrong_answer_3());
 
-            radioans1.setText(examList.get(COUNT).getAnswer());
-            radioans2.setText(examList.get(Answer2).getAnswer());
-            radioans3.setText(examList.get(Answer3).getAnswer());
         } else if (a == 1) {
-
-
-            radioans1.setText(examList.get(Answer2).getAnswer());
-            radioans2.setText(examList.get(COUNT).getAnswer());
-            radioans3.setText(examList.get(Answer3).getAnswer());
-
+            radioans1.setText(examList.get(COUNT).getWrong_answer_2());
+            radioans2.setText(examList.get(COUNT).getAnswer_1());
+            radioans3.setText(examList.get(COUNT).getWrong_answer_3());
 
         } else if (a == 2) {
-            radioans1.setText(examList.get(Answer2).getAnswer());
-            radioans2.setText(examList.get(Answer3).getAnswer());
-            radioans3.setText(examList.get(COUNT).getAnswer());
+            radioans1.setText(examList.get(COUNT).getWrong_answer_2());
+            radioans2.setText(examList.get(COUNT).getWrong_answer_3());
+            radioans3.setText(examList.get(COUNT).getAnswer_1());
 
         }
     }
@@ -166,9 +154,9 @@ public class ExamQuestion extends AppCompatActivity {
 
                     for (DataSnapshot questionSnapshot : dataSnapshot.getChildren()) {
                         ExamModel examModel = questionSnapshot.getValue(ExamModel.class);
-                        examList.add(new ExamModel(examModel.getQuestion(), examModel.getAnswer()));
+                        examList.add(new ExamModel(examModel.getQuestion(), examModel.getAnswer_1(),examModel.getWrong_answer_2(),examModel.getWrong_answer_3()));
                     }
-                }else {
+                } else {
                     Toast.makeText(ExamQuestion.this, "error", Toast.LENGTH_SHORT).show();
 
                 }
@@ -183,13 +171,14 @@ public class ExamQuestion extends AppCompatActivity {
         });
     }
 
-    private void SaveScore(){
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("UserCoursesModel");
-        ExamScoreModel examScoreModel=new ExamScoreModel(CategoryName,CourseID,ExamID, Score +" from "+ examList.size() );
+    private void SaveScore() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("UserExamScors");
+        ExamScoreModel examScoreModel = new ExamScoreModel(CategoryName, CourseID, ExamID, Score + " from " + examList.size());
         databaseReference.child(Commans.registerModel.getEmail().replace(".", "Dot")).child("ExamsScors").child(String.valueOf(System.currentTimeMillis())).setValue(examScoreModel);
 
 
     }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();

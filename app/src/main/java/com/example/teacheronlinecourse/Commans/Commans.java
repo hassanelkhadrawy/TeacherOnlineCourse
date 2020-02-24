@@ -1,12 +1,20 @@
 package com.example.teacheronlinecourse.Commans;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -125,7 +133,7 @@ public class Commans {
 
 
     }
-    public static void RemoveCourse(final FirebaseRecyclerAdapter<CourseModel, CoursesAdapter> recyclerAdapter, RecyclerView coorsesRecycler){
+    public static void RemoveCourse(final FirebaseRecyclerAdapter<CourseModel, CoursesAdapter> recyclerAdapter, RecyclerView coorsesRecycler, final Context context){
         for (int i= 0;i<Commans.adminList.size();i++){
 
             if (Commans.registerModel.getEmail().equals(Commans.adminList.get(i))){
@@ -139,9 +147,8 @@ public class Commans {
                     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
                         int position = viewHolder.getAdapterPosition();
-                        recyclerAdapter.getRef(position).removeValue();
-                        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Search");
-                        databaseReference.child(recyclerAdapter.getRef(position).getKey()).removeValue();
+                        RemoveCourseAlert(recyclerAdapter,position,context);
+
 
                     }
                 });
@@ -150,4 +157,59 @@ public class Commans {
         }
 
     }
+
+    public static void RemoveCourseAlert(final FirebaseRecyclerAdapter<CourseModel, CoursesAdapter> recyclerAdapter, final int  position, Context context) {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Do you wnat to delete this item ?");
+
+        builder.setCancelable(false);
+        builder.setPositiveButton("OK", null);
+        builder.setNegativeButton("Cancel", null);
+        final AlertDialog mAlertDialog = builder.create();
+
+        mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialogInterface) {
+                Button Positive = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button Cancel = mAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                Positive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        recyclerAdapter.getRef(position).removeValue();
+                        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Search");
+                        databaseReference.child(recyclerAdapter.getRef(position).getKey()).removeValue();
+                        mAlertDialog.dismiss();
+
+
+                    }
+                });
+
+                Cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mAlertDialog.dismiss();
+
+                    }
+                });
+            }
+        });
+
+        mAlertDialog.show();
+        mAlertDialog.getWindow().setBackgroundDrawableResource(R.drawable.button_background_withborder);
+
+
+    }
+
+    public static void SelectImage(int REQUEST_CODE , Activity activity) {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        activity.startActivityForResult(Intent.createChooser(intent, "select picture"), REQUEST_CODE);
+
+    }
+
+
 }

@@ -5,9 +5,9 @@
     android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_aadExam"
         android:layout_width="match_parent"
-        android:layout_height="261dp"
-        android:id="@+id/recycler_aadExam"/>
+        android:layout_height="205dp" />
 
     <EditText
         android:layout_width="match_parent"
@@ -20,13 +20,29 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/answertxt"
+        android:id="@+id/answertxt1"
         android:gravity="center"
         android:hint="@string/answer"
         android:textSize="30sp"
         android:layout_margin="5dp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/answertxt2"
+        android:gravity="center"
+        android:hint="@string/wrong_answer"
+        android:textSize="30sp"
+        android:layout_margin="5dp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/answertxt3"
+        android:gravity="center"
+        android:hint="@string/wrong_answer"
+        android:textSize="30sp"
+        android:layout_margin="5dp"/>
     <TextView
-        android:id="@+id/finalexam"
+        android:id="@+id/addquestion"
         android:layout_width="148dp"
         android:layout_height="55dp"
         android:layout_gravity="end"

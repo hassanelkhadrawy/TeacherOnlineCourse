@@ -77,6 +77,7 @@ public class ProfileTab extends Fragment {
     private TextView addCourse;
     private TextView addAdmin;
     private TextView Edit;
+    private TextView Users;
     private ImageView proImage;
     private ImageView editProfImage;
     private EditText editText;
@@ -95,7 +96,9 @@ public class ProfileTab extends Fragment {
     private TextView addcategory;
     private Spinner categorySpinner;
     private ArrayAdapter<String> adapterCategory;
-    ArrayList<String> categoryList = new ArrayList<>();
+    private ArrayList<String> categoryList = new ArrayList<>();
+
+
 
     public ProfileTab() {
         // Required empty public constructor
@@ -125,6 +128,7 @@ public class ProfileTab extends Fragment {
         addCourse = view.findViewById(R.id.addCourse);
         addAdmin = view.findViewById(R.id.add_admin);
         Edit = view.findViewById(R.id.edit);
+        Users=view.findViewById(R.id.users);
         proImage = view.findViewById(R.id.proImage);
         profCountainer = (LinearLayout) view.findViewById(R.id.prof_countainer);
         addcategory = view.findViewById(R.id.addcategory);
@@ -146,6 +150,7 @@ public class ProfileTab extends Fragment {
 
         profName.setText(Commans.registerModel.getName());
         profEmail.setText(Commans.registerModel.getEmail());
+
         if (Commans.registerModel.getImage().equals("null")) {
             proImage.setVisibility(View.GONE);
         } else {
@@ -197,6 +202,13 @@ public class ProfileTab extends Fragment {
                 EditALert();
             }
         });
+        Users.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(getActivity(),UsersAvtivity.class));
+            }
+        });
         addAdmin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -242,7 +254,7 @@ public class ProfileTab extends Fragment {
         addCourseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SelectImage(1);
+                Commans.SelectImage(1,getActivity());
             }
         });
         uploadCourse.setOnClickListener(new View.OnClickListener() {
@@ -345,14 +357,6 @@ public class ProfileTab extends Fragment {
         dialog.dismiss();
         Commans.progressDialog.dismiss();
         Snackbar.make(profCountainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
-
-    }
-
-    private void SelectImage(int REQUEST_CODE) {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "select picture"), REQUEST_CODE);
 
     }
 
@@ -540,6 +544,7 @@ public class ProfileTab extends Fragment {
                 addAdmin.setVisibility(View.GONE);
                 addcategory.setVisibility(View.GONE);
                 addCourse.setVisibility(View.GONE);
+                Users.setVisibility(View.GONE);
             }
         }
 
@@ -565,7 +570,7 @@ public class ProfileTab extends Fragment {
         SelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SelectImage(2);
+                Commans.SelectImage(2,getActivity());
             }
         });
 

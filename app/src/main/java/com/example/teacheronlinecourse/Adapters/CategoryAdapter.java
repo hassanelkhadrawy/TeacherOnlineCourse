@@ -7,11 +7,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.teacheronlinecourse.R;
+import com.google.android.material.chip.Chip;
 
 public class CategoryAdapter extends RecyclerView.ViewHolder {
-    public TextView Category;
+    public Chip Category;
     public CategoryAdapter(@NonNull View itemView) {
         super(itemView);
-        Category=itemView.findViewById(R.id.categorytext);
+        Category=itemView.findViewById(R.id.chip);
     }
 }

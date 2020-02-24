@@ -25,8 +25,10 @@ public class AddExamAdapter extends RecyclerView.Adapter<AddExamAdapter.Viewhold
     public class Viewholder extends RecyclerView.ViewHolder {
         private TextView questionNum;
         private TextView question;
-        private TextView answerNum;
-        private TextView answer;
+        private TextView answer_1;
+        private TextView answer_2;
+        private TextView answer_3;
+
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
@@ -35,13 +37,15 @@ public class AddExamAdapter extends RecyclerView.Adapter<AddExamAdapter.Viewhold
          void initView(View view) {
             questionNum = (TextView)itemView. findViewById(R.id.question_num);
             question = (TextView) itemView.findViewById(R.id.question);
-            answerNum = (TextView)itemView. findViewById(R.id.answer_num);
-            answer = (TextView)itemView. findViewById(R.id.answer);
+             answer_1 = (TextView)itemView. findViewById(R.id.answer_num_1);
+             answer_2 = (TextView)itemView. findViewById(R.id.answer_num_2);
+             answer_3 = (TextView)itemView. findViewById(R.id.answer_num_3);
+
         }
     }
 
     Context context;
-    private ArrayList<ExamModel> Questiolist = new ArrayList<>();
+    private ArrayList<ExamModel> Questiolist;
 
     public AddExamAdapter(Context context, ArrayList<ExamModel> questiolist) {
         this.context = context;
@@ -59,10 +63,12 @@ public class AddExamAdapter extends RecyclerView.Adapter<AddExamAdapter.Viewhold
     @Override
     public void onBindViewHolder(@NonNull Viewholder holder, int position) {
 
-        holder.questionNum.setText("Q "+(position+1));
+        holder.questionNum.setText("Q"+(position+1)+" ");
         holder.question.setText(Questiolist.get(position).getQuestion());
-        holder.answerNum.setText("A "+(position+1));
-        holder.answer.setText(Questiolist.get(position).getAnswer());
+        holder.answer_1.setText(Questiolist.get(position).getAnswer_1());
+        holder.answer_2.setText(Questiolist.get(position).getWrong_answer_2());
+        holder.answer_3.setText(Questiolist.get(position).getWrong_answer_3());
+
 
     }
 

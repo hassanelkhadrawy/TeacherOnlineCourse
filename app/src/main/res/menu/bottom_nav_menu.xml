@@ -11,7 +11,10 @@
         android:icon="@drawable/ic_search_black_24dp"
         android:title="@string/search" />
 
-
+    <item
+        android:id="@+id/navigation_courses"
+        android:icon="@drawable/ic_play_circle_outline_black_24dp"
+        android:title="@string/my_courses" />
 
     <item
         android:id="@+id/navigation_favourite"

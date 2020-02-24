@@ -150,6 +150,16 @@
             android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:padding="10dp"
             />
+        <TextView
+            android:id="@+id/users"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Users"
+            android:textSize="25sp"
+            android:textColor="@color/black"
+            android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:padding="10dp"
+            />
 
         <TextView
             android:id="@+id/sinout"

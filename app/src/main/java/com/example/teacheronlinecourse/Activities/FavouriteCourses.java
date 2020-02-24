@@ -104,7 +104,6 @@ public class FavouriteCourses extends Fragment {
 
 
 
-                Commans.progressDialog.dismiss();
 
 
                 coursesAdapter.courseImage.setOnClickListener(new View.OnClickListener() {

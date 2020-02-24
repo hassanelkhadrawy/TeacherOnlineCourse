@@ -6,18 +6,26 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,15 +37,22 @@ import com.example.teacheronlinecourse.Fonts.Comfortaa_Regular;
 import com.example.teacheronlinecourse.Models.ChaptersModel;
 import com.example.teacheronlinecourse.Models.CourseModel;
 import com.example.teacheronlinecourse.Models.RateModel;
+import com.example.teacheronlinecourse.Models.SearchModel;
+import com.example.teacheronlinecourse.Models.TopCourseModel;
 import com.example.teacheronlinecourse.Models.UserCoursesModel;
 import com.example.teacheronlinecourse.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.UUID;
@@ -48,17 +63,26 @@ public class CourseInformation extends AppCompatActivity {
     private TextView coursechapternum;
     private TextView courseDescription;
     private TextView enrol;
-    private String courseID, categoryName,courseName,courseImageUrl;
+    private TextView addRate;
+    private TextView EditCourse;
+    private TextView exams;
+    private String courseID, categoryName, courseName, courseImageUrl;
     private FirebaseRecyclerAdapter<ChaptersModel, ChapterAdapter> recyclerAdapter;
     private DatabaseReference databaseReference;
-    private TextView addRate;
+    private StorageReference storageReference;
+    private ImageButton addCourseImage;
+    private Comfortaa_Regular addCourseName;
+    private Comfortaa_Regular addCourseDes;
+    private Comfortaa_Bold cancleAddCourse;
+    private Comfortaa_Bold uploadCourse;
+    private Uri ImageUri;
     private RatingBar ratingBar2;
     private RecyclerView recycler;
     private Comfortaa_Regular addChapterName;
     private Comfortaa_Bold cancleAddChapter;
     private Comfortaa_Bold uploadChapter;
     private LinearLayout courseCountainer;
-    private TextView exams;
+    private int CourseCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +95,7 @@ public class CourseInformation extends AppCompatActivity {
 
         initView();
         GetCourseInformation();
+        AddCourseCounter();
         Action();
     }
 
@@ -80,6 +105,7 @@ public class CourseInformation extends AppCompatActivity {
         courseDescription = findViewById(R.id.descrition);
         enrol = findViewById(R.id.enrol);
         addRate = findViewById(R.id.addRate);
+        EditCourse = findViewById(R.id.editcourse);
         recycler = (RecyclerView) findViewById(R.id.recycler);
 
         courseCountainer = (LinearLayout) findViewById(R.id.courseCountainer);
@@ -161,8 +187,8 @@ public class CourseInformation extends AppCompatActivity {
                     final CourseModel courseModel = dataSnapshot.getValue(CourseModel.class);
                     Picasso.with(CourseInformation.this).load(courseModel.getCourse_image()).placeholder(R.drawable.ic_perm_identity_black_24dp).into(courseImage);
 
-                    courseName=courseModel.getCourse_name();
-                    courseImageUrl=courseModel.getCourse_image();
+                    courseName = courseModel.getCourse_name();
+                    courseImageUrl = courseModel.getCourse_image();
                     courseDescription.setText(courseModel.getCourse_descrition());
                     DatabaseReference databaseReferenceuser = FirebaseDatabase.getInstance().getReference("UserCourses");
                     databaseReferenceuser.child(Commans.registerModel.getEmail().replace(".", "Dot")).child("Enroled").addValueEventListener(new ValueEventListener() {
@@ -206,14 +232,16 @@ public class CourseInformation extends AppCompatActivity {
         enrol.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("UserCourses");
-                CourseModel courseModel=new CourseModel();
-                UserCoursesModel userCoursesModel = new UserCoursesModel(categoryName, courseID,courseName,courseImageUrl);
+                databaseReference = FirebaseDatabase.getInstance().getReference("UserCourses");
+                UserCoursesModel userCoursesModel = new UserCoursesModel(categoryName, courseID, courseName, courseImageUrl);
                 databaseReference.child(Commans.registerModel.getEmail().replace(".", "Dot")).child("Enroled").child(String.valueOf(System.currentTimeMillis())).setValue(userCoursesModel);
                 enrol.setVisibility(View.GONE);
                 recycler.setVisibility(View.VISIBLE);
                 exams.setVisibility(View.VISIBLE);
 
+                databaseReference = FirebaseDatabase.getInstance().getReference("TopCourses").child(categoryName).child(courseID);
+                TopCourseModel topCourseModel = new TopCourseModel(courseID, CourseCount + 1);
+                databaseReference.setValue(topCourseModel);
                 GetChapters();
             }
         });
@@ -227,15 +255,153 @@ public class CourseInformation extends AppCompatActivity {
             }
         });
 
+        EditCourse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AddCourseDialog();
+            }
+        });
+
         exams.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(CourseInformation.this,Exams.class);
-                intent.putExtra("courseID",courseID);
-                intent.putExtra("categoryName",categoryName);
+                Intent intent = new Intent(CourseInformation.this, Exams.class);
+                intent.putExtra("courseID", courseID);
+                intent.putExtra("categoryName", categoryName);
                 startActivity(intent);
             }
         });
+
+    }
+
+    private void AddCourseDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.add_course_item, null);
+        addCourseImage = (ImageButton) view.findViewById(R.id.add_course_image);
+        addCourseName = (Comfortaa_Regular) view.findViewById(R.id.addCourseName);
+        addCourseDes = (Comfortaa_Regular) view.findViewById(R.id.addCoursDescribtion);
+        cancleAddCourse = (Comfortaa_Bold) view.findViewById(R.id.cancleAddCourse);
+        uploadCourse = (Comfortaa_Bold) view.findViewById(R.id.uploadCourse);
+
+
+        Picasso.with(this).load(courseImageUrl).placeholder(R.drawable.ic_perm_identity_black_24dp).into(addCourseImage);
+        addCourseName.setText(courseName);
+        addCourseDes.setText(courseDescription.getText().toString());
+        Commans.Prograss(this, getString(R.string.waiting));
+
+
+        builder.setView(view);
+        builder.setCancelable(false);
+        final AlertDialog dialog = builder.create();
+
+
+        addCourseImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Commans.SelectImage(1, CourseInformation.this);
+            }
+        });
+        uploadCourse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (TextUtils.isEmpty(addCourseName.getText().toString())) {
+                    Snackbar.make(courseCountainer, getString(R.string.enter_name), Snackbar.LENGTH_SHORT).show();
+
+
+                } else if (TextUtils.isEmpty(addCourseDes.getText().toString())) {
+                    Snackbar.make(courseCountainer, getString(R.string.enter_description), Snackbar.LENGTH_SHORT).show();
+
+                } else {
+                    Commans.progressDialog.show();
+                    UploadCourseData(dialog);
+                }
+            }
+        });
+        cancleAddCourse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.button_background);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1) {
+                ImageUri = data.getData();
+                addCourseImage.setImageURI(ImageUri);
+            }
+
+        } else {
+            Toast.makeText(this, "faild", Toast.LENGTH_SHORT).show();
+
+
+        }
+    }
+
+    private void UploadCourseData(final AlertDialog dialog) {
+        String imgName = UUID.randomUUID().toString();
+        databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(categoryName);
+        storageReference = FirebaseStorage.getInstance().getReference("images/" + imgName);
+
+        if (ImageUri != null) {
+            storageReference.putFile(ImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+
+                            CourseModel courseModel = new CourseModel(uri.toString(), addCourseName.getText().toString(), addCourseDes.getText().toString(), courseID);
+                            databaseReference.child(courseID).setValue(courseModel);
+
+                            // add to search
+
+                            databaseReference = FirebaseDatabase.getInstance().getReference("Search");
+                            SearchModel searchModel = new SearchModel(categoryName, courseID, addCourseName.getText().toString());
+                            databaseReference.child(courseID).setValue(searchModel);
+
+                            ImageUri = null;
+                            dialog.dismiss();
+                            Commans.progressDialog.dismiss();
+                            Snackbar.make(courseCountainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    dialog.dismiss();
+                    Commans.progressDialog.dismiss();
+                    Snackbar.make(courseCountainer, "" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+
+                }
+            });
+        } else {
+            CourseModel courseModel = new CourseModel(courseImageUrl, addCourseName.getText().toString(), addCourseDes.getText().toString(), courseID);
+            databaseReference.child(courseID).setValue(courseModel);
+            //  add to search
+
+            databaseReference = FirebaseDatabase.getInstance().getReference("Search");
+            SearchModel searchModel = new SearchModel(categoryName, courseID, addCourseName.getText().toString());
+            databaseReference.child(courseID).setValue(searchModel);
+
+            dialog.dismiss();
+            Commans.progressDialog.dismiss();
+            Snackbar.make(courseCountainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+
+        }
 
     }
 
@@ -290,15 +456,36 @@ public class CourseInformation extends AppCompatActivity {
 
     }
 
+    private void AddCourseCounter() {
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("TopCourses").child(categoryName).child(courseID);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    TopCourseModel topCourseModel = dataSnapshot.getValue(TopCourseModel.class);
+                    CourseCount = topCourseModel.getCours_count();
+
+                } else {
+                    CourseCount = 0;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void GetChapters() {
         databaseReference = FirebaseDatabase.getInstance().getReference().child("CoursesData").child(categoryName).child(courseID).child("Chapters");
         recyclerAdapter = new FirebaseRecyclerAdapter<ChaptersModel, ChapterAdapter>(ChaptersModel.class, R.layout.chapter_item, ChapterAdapter.class, databaseReference) {
             @Override
             protected void populateViewHolder(final ChapterAdapter chapterAdapter, ChaptersModel chaptersModel, final int i) {
                 chapterAdapter.ChapterName.setText(chaptersModel.getChapter_name());
-                chapterAdapter.ChapterNum.setText((i + 1)+"");
+                chapterAdapter.ChapterNum.setText((i + 1) + "");
                 coursechapternum.setText((i + 1) + " Chapter");
-
 
 
                 int position = readState();

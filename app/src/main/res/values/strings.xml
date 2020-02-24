@@ -53,4 +53,8 @@
     <string name="wrong_code">Wrong Code</string>
     <string name="emailexist">Email aready exist</string>
     <string name="courses">Courses</string>
+    <string name="my_courses">My Courses</string>
+    <string name="wrong_answer">Wrong answer</string>
+    <string name="edit">Edit</string>
+    <string name="enter_description">Enter Description</string>
 </resources>

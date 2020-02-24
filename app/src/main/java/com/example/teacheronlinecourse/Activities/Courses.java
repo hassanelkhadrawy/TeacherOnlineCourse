@@ -98,7 +98,7 @@ public class Courses extends AppCompatActivity {
 
                         Intent intent = new Intent(Courses.this, CourseInformation.class);
                         intent.putExtra("categoryName", CategoryName);
-                        intent.putExtra("courseID", recyclerAdapter.getRef(i).getKey());
+                        intent.putExtra("courseID", courseModel.getCourse_id());
                         startActivity(intent);
 
                     }
@@ -138,7 +138,7 @@ public class Courses extends AppCompatActivity {
         recyclerAdapter.notifyDataSetChanged();
         coorsesRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         coorsesRecycler.setAdapter(recyclerAdapter);
-        Commans.RemoveCourse(recyclerAdapter,coorsesRecycler);
+        Commans.RemoveCourse(recyclerAdapter,coorsesRecycler,this);
 
     }
 

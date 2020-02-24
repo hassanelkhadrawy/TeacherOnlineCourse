@@ -34,8 +34,11 @@ public class Exams extends AppCompatActivity {
 
     private RecyclerView recyclerAadExam;
     private EditText questiontxt;
-    private EditText answertxt;
-    private TextView finalexam;
+    private EditText answertxt_1;
+    private EditText answertxt_2;
+    private EditText answertxt_3;
+
+    private TextView AddQuestion;
     private ArrayList<ExamModel> Questiolist = new ArrayList<>();
     private String CourseID, CategoryName;
     private DatabaseReference databaseReference;
@@ -79,27 +82,41 @@ public class Exams extends AppCompatActivity {
 
         recyclerAadExam = (RecyclerView) view.findViewById(R.id.recycler_aadExam);
         questiontxt = (EditText) view.findViewById(R.id.questiontxt);
-        answertxt = (EditText) view.findViewById(R.id.answertxt);
-        finalexam = (TextView) view.findViewById(R.id.finalexam);
+        answertxt_1 = (EditText) view.findViewById(R.id.answertxt1);
+        answertxt_2 = (EditText) view.findViewById(R.id.answertxt2);
+        answertxt_3 = (EditText) view.findViewById(R.id.answertxt3);
+
+        AddQuestion = (TextView) view.findViewById(R.id.addquestion);
         builder.setView(view);
 
 
-        finalexam.setOnClickListener(new View.OnClickListener() {
+        AddQuestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (TextUtils.isEmpty(questiontxt.getText().toString())) {
                     Toast.makeText(Exams.this, "Add Question", Toast.LENGTH_SHORT).show();
-                } else if (TextUtils.isEmpty(answertxt.getText().toString())) {
+                } else if (TextUtils.isEmpty(answertxt_1.getText().toString())) {
 
-                    Toast.makeText(Exams.this, "Add Answer", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Exams.this, "Add Answer 1", Toast.LENGTH_SHORT).show();
+
+                } else if (TextUtils.isEmpty(answertxt_2.getText().toString())) {
+
+                    Toast.makeText(Exams.this, "Add Answer 2", Toast.LENGTH_SHORT).show();
+
+                } else if (TextUtils.isEmpty(answertxt_3.getText().toString())) {
+
+                    Toast.makeText(Exams.this, "Add Answer 3", Toast.LENGTH_SHORT).show();
 
                 } else {
-                    Questiolist.add(new ExamModel(questiontxt.getText().toString(), answertxt.getText().toString()));
+                    Questiolist.add(new ExamModel(questiontxt.getText().toString(), answertxt_1.getText().toString(),answertxt_2.getText().toString(),answertxt_3.getText().toString()));
                     AddExamAdapter addExamAdapter = new AddExamAdapter(Exams.this, Questiolist);
                     recyclerAadExam.setLayoutManager(new LinearLayoutManager(Exams.this, LinearLayoutManager.VERTICAL, false));
                     recyclerAadExam.setAdapter(addExamAdapter);
                     questiontxt.setText("");
-                    answertxt.setText("");
+                    answertxt_1.setText("");
+                    answertxt_2.setText("");
+                    answertxt_3.setText("");
+
 
 
                 }
@@ -151,7 +168,7 @@ public class Exams extends AppCompatActivity {
         String ExamID = String.valueOf(System.currentTimeMillis());
         databaseReference = FirebaseDatabase.getInstance().getReference("CoursesData");
         for (int i = 0; i < Questiolist.size(); i++) {
-            ExamModel examModel = new ExamModel(Questiolist.get(i).getQuestion(), Questiolist.get(i).getAnswer());
+            ExamModel examModel = new ExamModel(Questiolist.get(i).getQuestion(), Questiolist.get(i).getAnswer_1(),Questiolist.get(i).getWrong_answer_2(),Questiolist.get(i).getWrong_answer_3());
             databaseReference.child(CategoryName).child(CourseID).child("Exams").child(ExamID).child(String.valueOf(System.currentTimeMillis())).setValue(examModel);
             Log.d("databaseReference", databaseReference.toString());
 
