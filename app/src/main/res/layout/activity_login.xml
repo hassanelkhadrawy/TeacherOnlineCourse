@@ -76,7 +76,14 @@
                 android:textSize="23sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="ForgetPassword"
+            android:text="@string/forget_password"
+            android:textColor="@color/orange"
+            android:textSize="18sp"
+            tools:ignore="OnClick" />
 
         <TextView
             android:layout_width="200dp"

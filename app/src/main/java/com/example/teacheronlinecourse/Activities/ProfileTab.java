@@ -80,7 +80,8 @@ public class ProfileTab extends Fragment {
     private TextView Users;
     private ImageView proImage;
     private ImageView editProfImage;
-    private EditText editText;
+    private EditText editTextName;
+    private EditText editTextPassword;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
     private ImageButton addCourseImage;
@@ -88,7 +89,7 @@ public class ProfileTab extends Fragment {
     private Comfortaa_Regular addCourseDes;
     private Comfortaa_Bold cancleAddCourse;
     private Comfortaa_Bold uploadCourse;
-    private Uri ImageUri;
+    private Uri ImageUri=null;
     private LinearLayout profCountainer;
     private TextView addCategoryName;
     private Comfortaa_Bold cancleAddCategory;
@@ -164,7 +165,7 @@ public class ProfileTab extends Fragment {
             @Override
             public void onClick(View v) {
 
-                saveState();
+                saveState("null","null");
                 startActivity(new Intent(getActivity(), Login.class));
                 getActivity().finish();
             }
@@ -199,7 +200,7 @@ public class ProfileTab extends Fragment {
         Edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditALert();
+                OldPassword();
             }
         });
         Users.setOnClickListener(new View.OnClickListener() {
@@ -254,7 +255,7 @@ public class ProfileTab extends Fragment {
         addCourseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Commans.SelectImage(1,getActivity());
+               SelectImage(1);
             }
         });
         uploadCourse.setOnClickListener(new View.OnClickListener() {
@@ -281,6 +282,15 @@ public class ProfileTab extends Fragment {
         dialog.show();
         dialog.getWindow().setBackgroundDrawableResource(R.drawable.button_background);
     }
+
+    private void SelectImage(int REQUEST_CODE ) {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "select picture"), REQUEST_CODE);
+
+    }
+
 
     private void AddCAtegoryToList() {
         databaseReference = FirebaseDatabase.getInstance().getReference("Category");
@@ -437,13 +447,13 @@ public class ProfileTab extends Fragment {
 
     }
 
-    private void saveState() {
+    private void saveState(String Email,String Password) {
         SharedPreferences aSharedPreferences = getActivity().getSharedPreferences(
                 "Favourite", Context.MODE_PRIVATE);
         SharedPreferences.Editor aSharedPreferencesEdit = aSharedPreferences
                 .edit();
-        aSharedPreferencesEdit.putString("Email", "null");
-        aSharedPreferencesEdit.putString("Password", "null");
+        aSharedPreferencesEdit.putString("Email", Email);
+        aSharedPreferencesEdit.putString("Password", Password);
         aSharedPreferencesEdit.commit();
     }
 
@@ -545,6 +555,12 @@ public class ProfileTab extends Fragment {
                 addcategory.setVisibility(View.GONE);
                 addCourse.setVisibility(View.GONE);
                 Users.setVisibility(View.GONE);
+            }else {
+                addAdmin.setVisibility(View.VISIBLE);
+                addcategory.setVisibility(View.VISIBLE);
+                addCourse.setVisibility(View.VISIBLE);
+                Users.setVisibility(View.VISIBLE);
+                break;
             }
         }
 
@@ -553,24 +569,27 @@ public class ProfileTab extends Fragment {
     private void EditALert() {
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_item, null);
-        editProfImage = view.findViewById(R.id.editprofImage);
-        ImageView SelectImage = view.findViewById(R.id.selecteditprofImage);
-        editText = view.findViewById(R.id.editName);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final View viewcountainer = LayoutInflater.from(getActivity()).inflate(R.layout.edit_item, null);
+        editProfImage = viewcountainer.findViewById(R.id.editprofImage);
+        ImageView SelectImage = viewcountainer.findViewById(R.id.selecteditprofImage);
+        editTextName = viewcountainer.findViewById(R.id.editName);
+        editTextPassword = viewcountainer.findViewById(R.id.editPassword);
 
         if (!Commans.registerModel.getImage().equals("null")) {
             Picasso.with(getActivity()).load(Commans.registerModel.getImage()).placeholder(R.drawable.ic_perm_identity_black_24dp).into(editProfImage);
 
         }
 
-        editText.setText(Commans.registerModel.getName());
-        builder.setView(view);
+        editTextName.setText(Commans.registerModel.getName());
+        editTextPassword.setText(Commans.registerModel.getPassword());
+
+        builder.setView(viewcountainer);
 
         SelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Commans.SelectImage(2,getActivity());
+               SelectImage(2);
             }
         });
 
@@ -588,61 +607,79 @@ public class ProfileTab extends Fragment {
                 Positive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (!editText.getText().toString().isEmpty()) {
 
-                            String imgName = UUID.randomUUID().toString();
-                            storageReference = FirebaseStorage.getInstance().getReference("images/" + imgName);
-                            final String courseID = String.valueOf(System.currentTimeMillis());
 
-                            if (ImageUri != null) {
-                                storageReference.putFile(ImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                            @Override
-                                            public void onSuccess(Uri uri) {
+                            if (editTextName.getText().toString().isEmpty()) {
 
-                                                databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(Commans.registerModel.getEmail().replace(".", "Dot"));
-                                                RegisterModel registerModel = new RegisterModel(editText.getText().toString(), Commans.registerModel.getEmail(), Commans.registerModel.getPassword(), String.valueOf(uri.toString()));
-                                                databaseReference.setValue(registerModel);
-                                                Commans.registerModel = registerModel;
+                                Toast.makeText(getActivity(), getString(R.string.enter_name), Toast.LENGTH_SHORT).show();
 
-                                                ImageUri = null;
-                                                mAlertDialog.dismiss();
-                                                Commans.progressDialog.dismiss();
-                                                Snackbar.make(profCountainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
 
-                                            }
-                                        });
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
+                            }else if (editTextPassword.getText().toString().isEmpty()){
 
-                                        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(Commans.registerModel.getEmail().replace(".", "Dot"));
-                                        RegisterModel registerModel = new RegisterModel(editText.getText().toString(), Commans.registerModel.getEmail(), Commans.registerModel.getPassword(), Commans.registerModel.getImage());
-                                        databaseReference.setValue(registerModel);
-                                        Commans.registerModel = registerModel;
-                                        mAlertDialog.dismiss();
-                                        Commans.progressDialog.dismiss();
-                                        Snackbar.make(profCountainer, "" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), getString(R.string.enter_password), Toast.LENGTH_SHORT).show();
 
-                                    }
-                                });
-                            } else {
+                            } else if (editTextPassword.getText().toString().length() <6){
+                                Toast.makeText(getActivity(), "Password should more than 6 charcters", Toast.LENGTH_SHORT).show();
 
-                                databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(Commans.registerModel.getEmail().replace(".", "Dot"));
-                                RegisterModel registerModel = new RegisterModel(editText.getText().toString(), Commans.registerModel.getEmail(), Commans.registerModel.getPassword(), Commans.registerModel.getImage());
-                                databaseReference.setValue(registerModel);
-                                Commans.registerModel = registerModel;
-                                mAlertDialog.dismiss();
-                                Commans.progressDialog.dismiss();
-                                Snackbar.make(profCountainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+                            }else {
+                                Commans.Prograss(getActivity(),getString(R.string.waiting));
+                                Commans.progressDialog.show();
 
+                                String imgName = UUID.randomUUID().toString();
+                                storageReference = FirebaseStorage.getInstance().getReference("images/" + imgName);
+
+                                if (ImageUri != null) {
+                                    storageReference.putFile(ImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                @Override
+                                                public void onSuccess(Uri uri) {
+
+                                                    databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(Commans.registerModel.getEmail().replace(".", "Dot"));
+                                                    RegisterModel registerModel = new RegisterModel(editTextName.getText().toString(), Commans.registerModel.getEmail(),editTextPassword.getText().toString(), uri.toString());
+                                                    databaseReference.setValue(registerModel);
+                                                    Commans.registerModel = registerModel;
+                                                    saveState(Commans.registerModel.getEmail(),editTextPassword.getText().toString());
+                                                    ImageUri = null;
+                                                    mAlertDialog.dismiss();
+                                                    Commans.progressDialog.dismiss();
+                                                    Snackbar.make(profCountainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+
+                                                }
+                                            });
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+
+                                            databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(Commans.registerModel.getEmail().replace(".", "Dot"));
+                                            RegisterModel registerModel = new RegisterModel(editTextName.getText().toString(), Commans.registerModel.getEmail(), editTextPassword.getText().toString(), Commans.registerModel.getImage());
+                                            databaseReference.setValue(registerModel);
+                                            Commans.registerModel = registerModel;
+                                            saveState(Commans.registerModel.getEmail(),editTextPassword.getText().toString());
+                                            mAlertDialog.dismiss();
+                                            Commans.progressDialog.dismiss();
+                                            Snackbar.make(profCountainer, "" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+
+                                        }
+                                    });
+
+                                } else {
+
+                                    databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(Commans.registerModel.getEmail().replace(".", "Dot"));
+                                    RegisterModel registerModel = new RegisterModel(editTextName.getText().toString(), Commans.registerModel.getEmail(), editTextPassword.getText().toString(), Commans.registerModel.getImage());
+                                    databaseReference.setValue(registerModel);
+                                    Commans.registerModel = registerModel;
+                                    saveState(Commans.registerModel.getEmail(),editTextPassword.getText().toString());
+                                    mAlertDialog.dismiss();
+                                    Commans.progressDialog.dismiss();
+                                    Snackbar.make(profCountainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+
+                                }
                             }
 
 
-                        }
 
                     }
                 });
@@ -662,5 +699,70 @@ public class ProfileTab extends Fragment {
 
 
     }
+
+    private void OldPassword() {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final EditText editText = new EditText(getActivity());
+
+        editText.setHint(getString(R.string.enter_password));
+        editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(editText);
+
+
+        builder.setCancelable(false);
+        builder.setPositiveButton("Ok", null);
+        builder.setNegativeButton("Cancel", null);
+        final AlertDialog mAlertDialog = builder.create();
+
+        mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialogInterface) {
+                Button Positive = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button Cancel = mAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                Positive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+
+                        if (!TextUtils.isEmpty(editText.getText().toString())) {
+
+                            if (Commans.registerModel.getPassword().equals(editText.getText().toString())) {
+
+                                EditALert();
+                                mAlertDialog.dismiss();
+                            } else {
+                                Toast.makeText(getActivity(), R.string.password_wrong, Toast.LENGTH_SHORT).show();
+
+                            }
+                        } else {
+                            Toast.makeText(getActivity(), getString(R.string.enter_password), Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+
+
+
+                });
+
+                Cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mAlertDialog.dismiss();
+
+                    }
+                });
+            }
+        });
+
+        mAlertDialog.show();
+        mAlertDialog.getWindow().setBackgroundDrawableResource(R.drawable.button_background);
+
+
+    }
+
+
 
 }

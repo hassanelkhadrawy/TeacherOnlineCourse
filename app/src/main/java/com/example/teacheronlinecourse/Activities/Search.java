@@ -118,7 +118,6 @@ public class Search extends Fragment {
     }
 
     private void Search(String searchtext, final int position) {
-        Commans.progressDialog.show();
 
 
        if (Flage){
@@ -138,7 +137,6 @@ public class Search extends Fragment {
 
                     GetSearchResult(firebaseSearchQuery, searchSpinner.getSelectedItem().toString());
                 } else {
-                    Commans.progressDialog.dismiss();
 
 
                 }
@@ -184,14 +182,12 @@ public class Search extends Fragment {
 
                         rate = rate / dataSnapshot.getChildrenCount();
                         coursesAdapter.ratingBar.setRating(rate);
-                        Commans.progressDialog.dismiss();
 
 
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Commans.progressDialog.dismiss();
 
                     }
                 });
@@ -220,8 +216,7 @@ public class Search extends Fragment {
     }
 
     private void AddcoursenameToList() {
-        Commans.Prograss(getActivity(), getString(R.string.waiting));
-        Commans.progressDialog.show();
+
         courses_name_list.clear();
         databaseReference = FirebaseDatabase.getInstance().getReference("Search");
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -266,7 +261,6 @@ public class Search extends Fragment {
 
 
 
-                    Commans.progressDialog.dismiss();
 
 
                 }
@@ -274,7 +268,6 @@ public class Search extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Commans.progressDialog.dismiss();
 
             }
         });

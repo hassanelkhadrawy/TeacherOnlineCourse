@@ -8,15 +8,16 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Top courses in Security"
         android:id="@+id/topcourse"
         android:textColor="@color/navigationbutoom"
         android:textStyle="bold"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+       />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tobcourse_recycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+      />
 
 </LinearLayout>

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import com.example.teacheronlinecourse.Models.CategoryModel;
 import com.example.teacheronlinecourse.Models.CourseModel;
 import com.example.teacheronlinecourse.Models.FAvouriteModel;
 import com.example.teacheronlinecourse.Models.RateModel;
+import com.example.teacheronlinecourse.Models.TopCourseModel;
 import com.example.teacheronlinecourse.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -39,6 +41,10 @@ import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -47,12 +53,14 @@ public class HomeTab extends Fragment {
 
     private RecyclerView courseRecycler;
     private DatabaseReference databaseReference;
+    private ArrayList<Integer> topCourseModelArrayList = new ArrayList<>();
     private FirebaseRecyclerAdapter<CategoryModel, TopCoursesAdapter> recyclerAdapter;
     private FirebaseRecyclerAdapter<CategoryModel, CategoryAdapter> categoryAdapter;
     private FirebaseRecyclerAdapter<CourseModel, CoursesAdapter> recyclercourseAdapter;
 
 
     private RecyclerView categoryRecycler;
+    private boolean flag=false;
 
     public HomeTab() {
         // Required empty public constructor
@@ -75,14 +83,14 @@ public class HomeTab extends Fragment {
 
     private void initView(View view) {
         courseRecycler = (RecyclerView) view.findViewById(R.id.course_recycler);
-        categoryRecycler = (RecyclerView)view. findViewById(R.id.category_recycler);
+        categoryRecycler = (RecyclerView) view.findViewById(R.id.category_recycler);
 
     }
 
-    private void GetCategory(){
+    private void GetCategory() {
         databaseReference = FirebaseDatabase.getInstance().getReference("Category");
 
-        categoryAdapter=new FirebaseRecyclerAdapter<CategoryModel, CategoryAdapter>(CategoryModel.class,R.layout.category_item,CategoryAdapter.class,databaseReference) {
+        categoryAdapter = new FirebaseRecyclerAdapter<CategoryModel, CategoryAdapter>(CategoryModel.class, R.layout.category_item, CategoryAdapter.class, databaseReference) {
             @Override
             protected void populateViewHolder(CategoryAdapter categoryAdapter, final CategoryModel categoryModel, int i) {
 
@@ -91,8 +99,8 @@ public class HomeTab extends Fragment {
                 categoryAdapter.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent=new Intent(getActivity(),Courses.class);
-                        intent.putExtra("CategoryName",categoryModel.getName());
+                        Intent intent = new Intent(getActivity(), Courses.class);
+                        intent.putExtra("CategoryName", categoryModel.getName());
                         startActivity(intent);
                     }
                 });
@@ -100,14 +108,10 @@ public class HomeTab extends Fragment {
         };
 
 
-
-
         GridLayoutManager layoutManager =
-            new GridLayoutManager(getActivity(), 2, GridLayoutManager.HORIZONTAL, false);
+                new GridLayoutManager(getActivity(), 2, GridLayoutManager.HORIZONTAL, false);
         categoryRecycler.setLayoutManager(layoutManager);
         categoryRecycler.setAdapter(categoryAdapter);
-
-
 
 
     }
@@ -119,72 +123,113 @@ public class HomeTab extends Fragment {
             @Override
             protected void populateViewHolder(final TopCoursesAdapter topcoursesAdapter, final CategoryModel categoryModel, final int i) {
 
-                topcoursesAdapter.TopText.setText("Top courses in "+categoryModel.getName());
-              DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("Courses").child(categoryModel.getName());
+                DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("Courses").child(categoryModel.getName());
+                final ViewGroup.LayoutParams topcourseparams = topcoursesAdapter.itemView.getLayoutParams();
 
-                recyclercourseAdapter=new FirebaseRecyclerAdapter<CourseModel, CoursesAdapter>(CourseModel.class,R.layout.course_item,CoursesAdapter.class,databaseReference2) {
+
+                recyclercourseAdapter = new FirebaseRecyclerAdapter<CourseModel, CoursesAdapter>(CourseModel.class, R.layout.course_item, CoursesAdapter.class, databaseReference2) {
                     @Override
                     protected void populateViewHolder(final CoursesAdapter coursesAdapter, final CourseModel courseModel, int position) {
+                        final ViewGroup.LayoutParams courseparams = coursesAdapter.itemView.getLayoutParams();
+//
+//                        topcourseparams.height = 0;
+//                        topcoursesAdapter.itemView.setLayoutParams(topcourseparams);
+
+                        if (position < 5) {
 
 
-                        if (!courseModel.getCourse_image().equals("null")) {
+                            if (!courseModel.getCourse_image().equals("null")) {
 
-                            Picasso.with(getActivity()).load(courseModel.getCourse_image()).placeholder(R.drawable.ic_perm_identity_black_24dp).into(coursesAdapter.courseImage);
-                        } else {
-                            coursesAdapter.courseImage.setVisibility(View.GONE);
+                                Picasso.with(getActivity()).load(courseModel.getCourse_image()).placeholder(R.drawable.ic_perm_identity_black_24dp).into(coursesAdapter.courseImage);
+                            } else {
+                                coursesAdapter.courseImage.setVisibility(View.GONE);
 
-                        }
-                        coursesAdapter.CourseName.setText(courseModel.getCourse_name());
+                            }
+                            coursesAdapter.CourseName.setText(courseModel.getCourse_name());
 
 
+                            DatabaseReference databaseReference3 = FirebaseDatabase.getInstance().getReference("CoursesRates");
+                            databaseReference3.child(categoryModel.getName()).child(courseModel.getCourse_id()).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    RateModel rateModel;
+                                    float rate = 0;
 
-                        DatabaseReference  databaseReference3 = FirebaseDatabase.getInstance().getReference("CoursesRates");
-                        databaseReference3.child(categoryModel.getName()).child(courseModel.getCourse_id()).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                RateModel rateModel;
-                                float rate = 0;
+                                    if (dataSnapshot.exists()) {
 
-                                for (DataSnapshot rateSnapshot : dataSnapshot.getChildren()) {
-                                    rateModel = rateSnapshot.getValue(RateModel.class);
-                                    rate+=rateModel.getRate();
+                                        for (DataSnapshot rateSnapshot : dataSnapshot.getChildren()) {
+                                            rateModel = rateSnapshot.getValue(RateModel.class);
+                                            rate += rateModel.getRate();
+                                        }
+
+                                        rate = rate / dataSnapshot.getChildrenCount();
+                                        coursesAdapter.ratingBar.setRating(rate);
+
+                                        if (rate >= 3.5) {
+                                            courseparams.height = courseparams.WRAP_CONTENT;
+                                            coursesAdapter.itemView.setLayoutParams(courseparams);
+                                            topcourseparams.height = topcourseparams.WRAP_CONTENT;
+                                            topcoursesAdapter.itemView.setLayoutParams(topcourseparams);
+                                            topcoursesAdapter.TopText.setText("Top courses in " + categoryModel.getName());
+
+
+                                        } else {
+                                            courseparams.height = 0;
+                                            courseparams.width=0;
+                                            coursesAdapter.itemView.setLayoutParams(courseparams);
+
+                                        }
+                                    } else {
+                                        courseparams.height = 0;
+                                        courseparams.width=0;
+                                        coursesAdapter.itemView.setLayoutParams(courseparams);
+
+                                    }
                                 }
 
-                                rate=rate/dataSnapshot.getChildrenCount();
-                                coursesAdapter.ratingBar.setRating(rate);
 
 
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
+                                }
+                            });
 
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-
-                       Commans .FavouriteFunction(databaseReference,coursesAdapter,courseModel.getCourse_id());
-
-
-                        coursesAdapter.courseImage.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                Intent intent = new Intent(getActivity(), CourseInformation.class);
-                                intent.putExtra("categoryName",categoryModel.getName());
-                                intent.putExtra("courseID", courseModel.getCourse_id());
-                                startActivity(intent);
+//
+                            if (TextUtils.isEmpty(topcoursesAdapter.TopText.getText().toString())){
+                                topcourseparams.height = 0;
+//                                topcourseparams.width = 0;
+                                topcoursesAdapter.itemView.setLayoutParams(topcourseparams);
 
                             }
-                        });
+//                            else {
+//                                topcourseparams.height = 0;
+//                                topcoursesAdapter.itemView.setLayoutParams(topcourseparams);
+//
+//                            }
+
+                            Commans.FavouriteFunction(databaseReference, coursesAdapter, courseModel.getCourse_id());
+
+
+                            coursesAdapter.courseImage.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    Intent intent = new Intent(getActivity(), CourseInformation.class);
+                                    intent.putExtra("categoryName", categoryModel.getName());
+                                    intent.putExtra("courseID", courseModel.getCourse_id());
+                                    startActivity(intent);
+
+                                }
+                            });
+                        }
+
                     }
                 };
 
 
                 topcoursesAdapter.topRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
                 topcoursesAdapter.topRecycler.setAdapter(recyclercourseAdapter);
-
 
 
             }
@@ -213,8 +258,8 @@ public class HomeTab extends Fragment {
     }
 
 
-    private void SLider(View view){
-        SliderView sliderView =view.findViewById(R.id.imageSlider);
+    private void SLider(View view) {
+        SliderView sliderView = view.findViewById(R.id.imageSlider);
 
         SliderAdapter adapter = new SliderAdapter(getActivity());
 

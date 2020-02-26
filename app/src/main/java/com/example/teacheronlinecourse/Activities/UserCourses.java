@@ -3,6 +3,7 @@ package com.example.teacheronlinecourse.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,13 +28,12 @@ public class UserCourses extends AppCompatActivity {
     private RecyclerView usercourserecycler;
     private DatabaseReference databaseReference;
     private FirebaseRecyclerAdapter<UserCoursesModel,CoursesAdapter>firebaseRecyclerAdapter;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_courses);
         initView();
+
         retriveCourses();
     }
 
@@ -48,34 +48,73 @@ public class UserCourses extends AppCompatActivity {
             @Override
             protected void populateViewHolder(final CoursesAdapter coursesAdapter, final UserCoursesModel userCoursesModel, int i) {
 
-                if (!userCoursesModel.getCourse_image().equals("null")) {
+                databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(userCoursesModel.getCategory_name());
 
-                    Picasso.with(UserCourses.this).load(userCoursesModel.getCourse_image()).placeholder(R.drawable.ic_perm_identity_black_24dp).into(coursesAdapter.courseImage);
-                } else {
-                    coursesAdapter.courseImage.setVisibility(View.GONE);
-
-                }
-                coursesAdapter.CourseName.setText(userCoursesModel.getCourse_name());
-
-                DatabaseReference  databaseReference3 = FirebaseDatabase.getInstance().getReference("CoursesRates");
-                databaseReference3.child(userCoursesModel.getCategory_name()).child(userCoursesModel.getCourse_id()).addValueEventListener(new ValueEventListener() {
+                databaseReference.child(userCoursesModel.getCourse_id()).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        RateModel rateModel;
-                        float rate = 0;
 
-                        for (DataSnapshot rateSnapshot : dataSnapshot.getChildren()) {
-                            rateModel = rateSnapshot.getValue(RateModel.class);
-                            rate+=rateModel.getRate();
+
+                        if (dataSnapshot.exists()){
+
+                            if (!userCoursesModel.getCourse_image().equals("null")) {
+
+                                Picasso.with(UserCourses.this).load(userCoursesModel.getCourse_image()).placeholder(R.drawable.ic_perm_identity_black_24dp).into(coursesAdapter.courseImage);
+                            } else {
+                                coursesAdapter.courseImage.setVisibility(View.GONE);
+
+                            }
+                            coursesAdapter.CourseName.setText(userCoursesModel.getCourse_name());
+
+                            DatabaseReference  databaseReference3 = FirebaseDatabase.getInstance().getReference("CoursesRates");
+                            databaseReference3.child(userCoursesModel.getCategory_name()).child(userCoursesModel.getCourse_id()).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    RateModel rateModel;
+                                    float rate = 0;
+
+                                    for (DataSnapshot rateSnapshot : dataSnapshot.getChildren()) {
+                                        rateModel = rateSnapshot.getValue(RateModel.class);
+                                        rate+=rateModel.getRate();
+                                    }
+
+                                    rate=rate/dataSnapshot.getChildrenCount();
+                                    coursesAdapter.ratingBar.setRating(rate);
+
+
+
+                                }
+
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
+                            Commans .FavouriteFunction(databaseReference,coursesAdapter,userCoursesModel.getCourse_id());
+
+                            coursesAdapter.courseImage.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    Intent intent = new Intent(UserCourses.this, CourseInformation.class);
+                                    intent.putExtra("categoryName", userCoursesModel.getCategory_name());
+                                    intent.putExtra("courseID", userCoursesModel.getCourse_id());
+                                    startActivity(intent);
+
+                                }
+                            });
+
+                        }else {
+                            ViewGroup.LayoutParams params = coursesAdapter.itemView.getLayoutParams();
+                            params.height = 0;
+                            coursesAdapter.itemView.setLayoutParams(params);
+
+
+
                         }
-
-                        rate=rate/dataSnapshot.getChildrenCount();
-                        coursesAdapter.ratingBar.setRating(rate);
-
-
-
                     }
-
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -83,19 +122,7 @@ public class UserCourses extends AppCompatActivity {
                     }
                 });
 
-                Commans .FavouriteFunction(databaseReference,coursesAdapter,userCoursesModel.getCourse_id());
 
-                coursesAdapter.courseImage.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        Intent intent = new Intent(UserCourses.this, CourseInformation.class);
-                        intent.putExtra("categoryName", userCoursesModel.getCategory_name());
-                        intent.putExtra("courseID", userCoursesModel.getCourse_id());
-                        startActivity(intent);
-
-                    }
-                });
 
 
 

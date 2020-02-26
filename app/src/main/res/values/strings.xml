@@ -57,4 +57,9 @@
     <string name="wrong_answer">Wrong answer</string>
     <string name="edit">Edit</string>
     <string name="enter_description">Enter Description</string>
+    <string name="forget_password">Forget Password?</string>
+    <string name="emailnotexist">Emai not exist</string>
+    <string name="enternewpassword">Enter New Password</string>
+    <string name="entervideourl">enter video url</string>
+    <string name="emailpasswordwrong">email or password  wrong</string>
 </resources>

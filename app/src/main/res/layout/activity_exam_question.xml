@@ -8,15 +8,20 @@
     android:gravity="center"
     android:padding="15dp"
     tools:context=".Activities.ExamQuestion">
-<androidx.cardview.widget.CardView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardCornerRadius="3dp"
-    app:cardElevation="3dp">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical">
+
 
 <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_margin="3dp"
     android:id="@+id/countainerquestions">
@@ -25,13 +30,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Hello World!"
-        android:textSize="40sp"
+        android:textSize="25sp"
         android:gravity="center"
         android:id="@+id/questiontext"
         android:textColor="@color/navigationbutoom"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="100dp"/>
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="50dp"/>
 
     <RadioGroup
         android:id="@+id/radiogroub"
@@ -74,7 +79,6 @@
         android:layout_marginTop="30sp"/>
 </LinearLayout>
 
-</androidx.cardview.widget.CardView>
 
 
     <Button
@@ -86,7 +90,9 @@
         android:id="@+id/start"
         android:background="@drawable/button_background_withborder"
         android:layout_marginTop="30sp"/>
+  </LinearLayout>
 
+    </ScrollView>
 
 
 </LinearLayout>

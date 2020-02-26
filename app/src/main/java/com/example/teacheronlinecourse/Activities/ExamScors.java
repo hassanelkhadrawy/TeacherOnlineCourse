@@ -40,7 +40,6 @@ public class ExamScors extends AppCompatActivity {
         adapter=new FirebaseRecyclerAdapter<ExamScoreModel, FileAdapter>(ExamScoreModel.class,R.layout.file_item,FileAdapter.class,databaseReference) {
             @Override
             protected void populateViewHolder(final FileAdapter fileAdapter, final ExamScoreModel examScoreModel, final int i) {
-                Toast.makeText(ExamScors.this, ""+databaseReference.toString(), Toast.LENGTH_SHORT).show();
 
                 databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(examScoreModel.getCategoryName()).child(examScoreModel.getCourseID());
                 databaseReference.addValueEventListener(new ValueEventListener() {

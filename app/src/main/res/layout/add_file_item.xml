@@ -16,26 +16,17 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_weight="1"
             app:cardCornerRadius="20dp"
             app:cardElevation="10dp">
 
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="@string/add_photo"
-                android:textSize="30sp"
-                android:id="@+id/phototext"
-                android:layout_gravity="center"
-                android:gravity="center"/>
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/addImageRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone"
-                android:id="@+id/addImageRecycler"/>
+                android:visibility="gone" />
             <!--        <ImageButton-->
             <!--            android:id="@+id/selectImage"-->
             <!--            android:layout_width="match_parent"-->
@@ -46,8 +37,72 @@
 
         </androidx.cardview.widget.CardView>
 
+        <TextView
+            android:id="@+id/_selectvideo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:drawableLeft="@drawable/ic_ondemand_video_black_24dp"
+            android:text="@string/add_video"
+            android:padding="10dp"
+            android:textSize="20sp"
+            android:visibility="gone"/>
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:visibility="gone"
+            android:id="@+id/videoUrlcountainer">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/black"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/or"
+                android:padding="10dp"
+                android:textSize="20sp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/black"
+                />
+
+        </LinearLayout>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/videoUrl"
+            android:gravity="center"
+            android:hint="Video Url"
+            android:textSize="25sp"
+            android:padding="10dp"
+            android:layout_margin="5dp"
+            android:visibility="gone"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@color/offwhite"
+            />
 
 
         <LinearLayout

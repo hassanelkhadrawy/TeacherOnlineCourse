@@ -94,6 +94,7 @@ public class CourseInformation extends AppCompatActivity {
 
 
         initView();
+        HideAdminItems();
         GetCourseInformation();
         AddCourseCounter();
         Action();
@@ -534,6 +535,20 @@ public class CourseInformation extends AppCompatActivity {
                 "Favourite", Context.MODE_PRIVATE);
         return aSharedPreferences.getInt(courseID, 0);
     }
+
+    private void HideAdminItems() {
+        for (int i = 0; i < Commans.adminList.size(); i++) {
+            if (!Commans.registerModel.getEmail().equals(Commans.adminList.get(i))) {
+                EditCourse.setVisibility(View.GONE);
+            }else {
+                EditCourse.setVisibility(View.VISIBLE);
+                break;
+
+            }
+        }
+
+    }
+
 
     @Override
     public void onBackPressed() {

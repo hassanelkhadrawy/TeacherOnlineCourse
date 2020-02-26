@@ -97,7 +97,9 @@ public class SplashActivity extends AppCompatActivity {
 
 
         } else {
-            Toast.makeText(this, R.string.check_internet, Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(this, R.string.check_internet, Toast.LENGTH_LONG).show();
+            finish();
         }
 
     }

@@ -2,6 +2,7 @@ package com.example.teacheronlinecourse.Adapters;
 
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -14,12 +15,14 @@ public class CoursesAdapter extends RecyclerView.ViewHolder {
     public ImageView courseImage,favourite;
     public TextView CourseName;
     public RatingBar ratingBar;
+    public LinearLayout countainer;
     public CoursesAdapter(@NonNull View itemView) {
         super(itemView);
         courseImage=itemView.findViewById(R.id.imagecourse);
         CourseName=itemView.findViewById(R.id.courseName);
         ratingBar=itemView.findViewById(R.id.ratingBar);
         favourite=itemView.findViewById(R.id.favorite);
+        countainer=itemView.findViewById(R.id.coursesCountainer);
 
     }
 }

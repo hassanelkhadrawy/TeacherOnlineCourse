@@ -34,6 +34,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Commans {
     public static ProgressDialog progressDialog;
@@ -125,6 +127,7 @@ public class Commans {
         for (int i= 0;i<adminList.size();i++){
             if (registerModel.getEmail().equals(adminList.get(i))){
                 item.setVisible(true);
+                break;
 
             }else {
                 item.setVisible(false);
@@ -211,5 +214,10 @@ public class Commans {
 
     }
 
-
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
 }

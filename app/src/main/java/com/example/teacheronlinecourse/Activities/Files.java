@@ -6,12 +6,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -44,11 +47,13 @@ import java.util.UUID;
 public class Files extends AppCompatActivity {
 
     private LinearLayout addItemContainer;
-    private TextView phototext;
     private RecyclerView addImageRecycler;
     private TextView Addphoto;
     private TextView Addfile;
     private TextView Addvideo;
+    private TextView SelectVideo;
+    private EditText VideoURL;
+    private LinearLayout voideoCountainer;
     private Comfortaa_Bold cancleupload;
     private Comfortaa_Bold upLoadItem;
     private ArrayList<LoadFileModel> uriArrayList;
@@ -129,13 +134,15 @@ public class Files extends AppCompatActivity {
         View view = LayoutInflater.from(this).inflate(R.layout.add_file_item, null);
 
         addItemContainer = (LinearLayout) view.findViewById(R.id.addItemContainer);
-        phototext = (TextView) view.findViewById(R.id.phototext);
         addImageRecycler = (RecyclerView) view.findViewById(R.id.addImageRecycler);
         Addphoto = (TextView) view.findViewById(R.id._addphoto);
         Addfile = (TextView) view.findViewById(R.id._adddfile);
         Addvideo = (TextView) view.findViewById(R.id._addvideo);
         cancleupload = (Comfortaa_Bold) view.findViewById(R.id.cancleupload);
         upLoadItem = (Comfortaa_Bold) view.findViewById(R.id.upLoadItem);
+        SelectVideo=view.findViewById(R.id._selectvideo);
+        VideoURL=view.findViewById(R.id.videoUrl);
+        voideoCountainer=view.findViewById(R.id.videoUrlcountainer);
 
         Commans.Prograss(this, getString(R.string.waiting));
 
@@ -157,6 +164,17 @@ public class Files extends AppCompatActivity {
         });
 
         Addvideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SelectVideo.setVisibility(View.VISIBLE);
+                voideoCountainer.setVisibility(View.VISIBLE);
+                VideoURL.setVisibility(View.VISIBLE);
+
+                //SelectVideo();
+            }
+        });
+
+        SelectVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SelectVideo();
@@ -267,7 +285,6 @@ public class Files extends AppCompatActivity {
 
             if (!uriArrayList.isEmpty()) {
 
-                phototext.setVisibility(View.GONE);
                 addImageRecycler.setVisibility(View.VISIBLE);
                 addImageRecycler.setLayoutManager(new GridLayoutManager(this, 3));
                 AddImageAdapter addImageAdapter = new AddImageAdapter(this, uriArrayList);
@@ -286,7 +303,7 @@ public class Files extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference("CoursesData");
         storageReference = FirebaseStorage.getInstance().getReference("images/");
 
-        if (!uriArrayList.isEmpty()) {
+        if (saveuri!=null) {
 
 
             for (int i = 0; i < uriArrayList.size(); i++) {
@@ -308,8 +325,8 @@ public class Files extends AppCompatActivity {
                                             FileModel fileModel = new FileModel(uri.toString(), true);
 
                                             databaseReference.child(categoryName).child(courseID).child("Chapters").child(chapterID).child("chpter_videos").child(String.valueOf(System.currentTimeMillis())).setValue(fileModel);
-
                                             Snackbar.make(countainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+
                                         } else {
                                             FileModel fileModel = new FileModel(uri.toString(), uriArrayList.get(finalI2).isImage());
 
@@ -322,6 +339,7 @@ public class Files extends AppCompatActivity {
                                         if (finalI == uriArrayList.size() - 1) {
                                             Commans.progressDialog.dismiss();
                                             dialog.dismiss();
+                                            saveuri=null;
                                             Snackbar.make(countainer, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
                                         }
                                     }
@@ -335,6 +353,7 @@ public class Files extends AppCompatActivity {
 
                                 Commans.progressDialog.dismiss();
                                 dialog.dismiss();
+                                saveuri=null;
                                 Snackbar.make(countainer, e.getMessage(), Snackbar.LENGTH_SHORT).show();
 
                             }
@@ -342,6 +361,17 @@ public class Files extends AppCompatActivity {
 
             }
 
+        }else {
+            if (!TextUtils.isEmpty(VideoURL.getText().toString())){
+                FileModel fileModel = new FileModel(VideoURL.getText().toString(), false);
+                databaseReference.child(categoryName).child(courseID).child("Chapters").child(chapterID).child("chpter_videos").child(String.valueOf(System.currentTimeMillis())).setValue(fileModel);
+                Commans.progressDialog.dismiss();
+                dialog.dismiss();
+                Toast.makeText(this, R.string.success, Toast.LENGTH_SHORT).show();
+
+            }else {
+                Toast.makeText(this, R.string.entervideourl, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
