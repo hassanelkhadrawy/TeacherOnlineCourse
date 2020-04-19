@@ -162,6 +162,7 @@ public class HomeTab extends Fragment {
                                         coursesAdapter.ratingBar.setRating(rate);
 
                                         if (rate >= 3.5) {
+
                                             courseparams.height = courseparams.WRAP_CONTENT;
                                             coursesAdapter.itemView.setLayoutParams(courseparams);
                                             topcourseparams.height = topcourseparams.WRAP_CONTENT;
