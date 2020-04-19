@@ -94,7 +94,7 @@ public class UserCourses extends AppCompatActivity {
 
                             Commans .FavouriteFunction(databaseReference,coursesAdapter,userCoursesModel.getCourse_id());
 
-                            coursesAdapter.courseImage.setOnClickListener(new View.OnClickListener() {
+                            coursesAdapter.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
 

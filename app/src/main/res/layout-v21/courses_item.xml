@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coursesCountainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/coursesCountainer"
     android:layout_margin="10dp">
 
     <androidx.cardview.widget.CardView
@@ -15,12 +15,12 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
             <com.github.florent37.shapeofview.shapes.RoundRectView
-                android:layout_width="match_parent"
-                android:layout_height="185dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:elevation="2dp"
                 app:shape_roundRect_bottomLeftRadius="5dp"
                 app:shape_roundRect_bottomRightRadius="5dp"
@@ -29,35 +29,38 @@
 
                 <ImageView
                     android:id="@+id/imagecourse"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="107dp"
+                    android:layout_height="105dp"
                     android:scaleType="fitXY"
                     android:visibility="visible" />
             </com.github.florent37.shapeofview.shapes.RoundRectView>
 
-
-            <TextView
-                android:id="@+id/courseName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:hint="CCNA"
-                android:textColor="@color/black"
-                android:textSize="17sp" />
-
-
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/courseName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:hint="CCNA"
+                    android:maxLines="2"
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                 <RatingBar
                     android:id="@+id/ratingBar"
                     style="?android:attr/ratingBarStyleIndicator"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:max="5"
                     android:scaleX="1"
                     android:scaleY="1"
@@ -65,11 +68,13 @@
 
                 <ImageView
                     android:id="@+id/favorite"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:src="@drawable/ic_favorite_border_black_24dp" />
+                </LinearLayout>
+
             </LinearLayout>
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

@@ -37,7 +37,6 @@ public class FavouriteCourses extends Fragment {
 
 
     private RecyclerView favouriteRecycler;
-    private boolean isFavourite;
     private DatabaseReference databaseReference;
     private FirebaseRecyclerAdapter<FAvouriteModel, CoursesAdapter> recyclerAdapter;
 
@@ -106,7 +105,7 @@ public class FavouriteCourses extends Fragment {
 
 
 
-                coursesAdapter.courseImage.setOnClickListener(new View.OnClickListener() {
+                coursesAdapter.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
@@ -134,6 +133,7 @@ public class FavouriteCourses extends Fragment {
         recyclerAdapter.notifyDataSetChanged();
         favouriteRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         favouriteRecycler.setAdapter(recyclerAdapter);
+
         ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -190,11 +190,6 @@ public class FavouriteCourses extends Fragment {
         aSharedPreferencesEdit.commit();
     }
 
-    private boolean readState() {
-        SharedPreferences aSharedPreferences = getActivity().getSharedPreferences(
-                "Favourite", Context.MODE_PRIVATE);
-        return aSharedPreferences.getBoolean("State", true);
-    }
 
 
 }

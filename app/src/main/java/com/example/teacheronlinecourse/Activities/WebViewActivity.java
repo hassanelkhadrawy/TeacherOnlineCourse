@@ -37,7 +37,6 @@ public class WebViewActivity extends AppCompatActivity {
     }
     private void Action(){
 
-        mWebView = (WebView)findViewById(R.id.webview);
         mWebView.setWebViewClient(new MyBrowser(this));
         mWebView.getSettings().setLoadsImagesAutomatically(true);
         mWebView.getSettings().setJavaScriptEnabled(true);

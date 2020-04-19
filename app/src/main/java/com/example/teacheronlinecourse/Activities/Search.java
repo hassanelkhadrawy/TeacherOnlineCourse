@@ -101,6 +101,7 @@ public class Search extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long rowId) {
                 String selection = (String) parent.getItemAtPosition(position);
+
                 int pos = -1;
 
                 for (int i = 0; i < courses_name_list.size(); i++) {
@@ -195,7 +196,7 @@ public class Search extends Fragment {
                 Commans.FavouriteFunction(databaseReference, coursesAdapter, courseModel.getCourse_id());
 
 
-                coursesAdapter.courseImage.setOnClickListener(new View.OnClickListener() {
+                coursesAdapter.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 

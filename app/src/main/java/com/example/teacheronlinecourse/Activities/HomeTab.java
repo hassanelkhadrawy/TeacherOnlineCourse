@@ -53,14 +53,10 @@ public class HomeTab extends Fragment {
 
     private RecyclerView courseRecycler;
     private DatabaseReference databaseReference;
-    private ArrayList<Integer> topCourseModelArrayList = new ArrayList<>();
     private FirebaseRecyclerAdapter<CategoryModel, TopCoursesAdapter> recyclerAdapter;
     private FirebaseRecyclerAdapter<CategoryModel, CategoryAdapter> categoryAdapter;
     private FirebaseRecyclerAdapter<CourseModel, CoursesAdapter> recyclercourseAdapter;
-
-
     private RecyclerView categoryRecycler;
-    private boolean flag=false;
 
     public HomeTab() {
         // Required empty public constructor
@@ -211,7 +207,7 @@ public class HomeTab extends Fragment {
                             Commans.FavouriteFunction(databaseReference, coursesAdapter, courseModel.getCourse_id());
 
 
-                            coursesAdapter.courseImage.setOnClickListener(new View.OnClickListener() {
+                            coursesAdapter.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
 
@@ -238,21 +234,6 @@ public class HomeTab extends Fragment {
         courseRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         courseRecycler.setAdapter(recyclerAdapter);
 
-//        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-//            @Override
-//            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-//                return false;
-//            }
-//
-//            @Override
-//            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-//
-//                int position = viewHolder.getAdapterPosition();
-//                recyclerAdapter.getRef(position).removeValue();
-//
-//            }
-//        });
-//        helper.attachToRecyclerView(courseRecycler);
 
 
     }

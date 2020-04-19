@@ -87,7 +87,7 @@
                     android:drawablePadding="10dp"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:text="30 Video"
+                    android:text="Chapters"
                     android:textSize="20sp" />
 
                 <TextView

@@ -114,7 +114,7 @@ public class Files extends AppCompatActivity {
         intent.setType("video/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        startActivityForResult(Intent.createChooser(intent, "select picture"), 3);
+        startActivityForResult(Intent.createChooser(intent, "select video"), 3);
 
     }
 
@@ -150,12 +150,15 @@ public class Files extends AppCompatActivity {
         builder.setView(view);
         builder.setCancelable(false);
         final AlertDialog dialog = builder.create();
+
+
         Addphoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SelectImage();
             }
         });
+
         Addfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

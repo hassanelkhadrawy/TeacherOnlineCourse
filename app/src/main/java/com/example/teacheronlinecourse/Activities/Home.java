@@ -32,58 +32,6 @@ public class Home extends AppCompatActivity {
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-
-//        navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-//        BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
-//                new BottomNavigationView.OnNavigationItemSelectedListener() {
-//                    @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                        switch (item.getItemId()) {
-//                            case R.id.navigation_courses:
-//                                startActivity(new Intent(Home.this, UserCourses.class));
-//
-//                                return true;
-//                        }
-//                        return false;
-//                    }
-//                };
     }
 
-//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-//            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-//
-//        @Override
-//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//            Fragment fragment;
-//            switch (item.getItemId()) {
-//                case R.id.navigation_home:
-//                    fragment = new HomeTab();
-//                    loadFragment(fragment);
-//                    return true;
-//                case R.id.navigation_search:
-//                    fragment = new Search();
-//                    loadFragment(fragment);
-//                    return true;
-//                case R.id.navigation_courses:
-//                    startActivity(new Intent(Home.this, UserCourses.class));
-//
-//                    return true;
-//                case R.id.navigation_favourite:
-//                    fragment = new FavouriteCourses();
-//                    loadFragment(fragment);
-//                    return true;
-//                case R.id.navigation_notifications:
-//                    fragment = new ProfileTab();
-//                    loadFragment(fragment);
-//                    return true;
-//            }
-//            return false;
-//        }
-//    };
-//    private void loadFragment(Fragment fragment) {
-//        // load fragment
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        transaction.replace(R.id.nav_host_fragment, fragment);
-//        transaction.addToBackStack(null);
-//        transaction.commit();
-//    }
 }

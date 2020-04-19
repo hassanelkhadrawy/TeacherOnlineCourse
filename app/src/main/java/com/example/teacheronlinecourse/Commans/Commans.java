@@ -156,6 +156,8 @@ public class Commans {
                     }
                 });
                 helper.attachToRecyclerView(coorsesRecycler);
+
+                break;
             }
         }
 

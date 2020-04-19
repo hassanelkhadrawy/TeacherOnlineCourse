@@ -26,7 +26,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class UsersAvtivity extends AppCompatActivity {
 
-    private int Count=0;
     private TextView UsersNumber;
     private RecyclerView userRecycler;
     private FirebaseRecyclerAdapter<RegisterModel, FileAdapter> adapter;
@@ -47,7 +46,7 @@ public class UsersAvtivity extends AppCompatActivity {
             @Override
             protected void populateViewHolder(FileAdapter fileAdapter, RegisterModel registerModel, int i) {
 
-                UsersNumber.setText((i+1)+" User");
+                UsersNumber.setText(adapter.getItemCount()+" User");
 
                 fileAdapter.File.setText("Name: "+registerModel.getName()+"\n"+"Email: "+registerModel.getEmail()+"\n");
 
@@ -77,6 +76,7 @@ public class UsersAvtivity extends AppCompatActivity {
 
                 int position = viewHolder.getAdapterPosition();
                 RemoveUserAlert(adapter,position);
+                adapter.notifyDataSetChanged();
 
 
             }
@@ -108,6 +108,7 @@ public class UsersAvtivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         adapter.getRef(position).removeValue();
+                        adapter.notifyDataSetChanged();
 
                         mAlertDialog.dismiss();
 

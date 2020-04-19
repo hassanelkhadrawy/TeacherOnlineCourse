@@ -35,6 +35,7 @@ public class ExamScors extends AppCompatActivity {
 
     private void initView() {
         examScoreRecycler = (RecyclerView) findViewById(R.id.examScoreRecycler);
+
          databaseReference = FirebaseDatabase.getInstance().getReference("UserExamScors").child(Commans.registerModel.getEmail().replace(".", "Dot")).child("ExamsScors");
 
         adapter=new FirebaseRecyclerAdapter<ExamScoreModel, FileAdapter>(ExamScoreModel.class,R.layout.file_item,FileAdapter.class,databaseReference) {

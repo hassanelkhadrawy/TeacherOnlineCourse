@@ -169,7 +169,6 @@ public class CourseInformation extends AppCompatActivity {
     private void SendChapterData(AlertDialog dialog) {
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("CoursesData");
-        final String chapterID = UUID.randomUUID().toString();
         ChaptersModel chaptersModel = new ChaptersModel(addChapterName.getText().toString());
         databaseReference.child(categoryName).child(courseID).child("Chapters").child(String.valueOf(System.currentTimeMillis())).setValue(chaptersModel);
         dialog.dismiss();
