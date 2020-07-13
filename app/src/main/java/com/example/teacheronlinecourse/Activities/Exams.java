@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,10 +24,14 @@ import com.example.teacheronlinecourse.Adapters.AddExamAdapter;
 import com.example.teacheronlinecourse.Adapters.FileAdapter;
 import com.example.teacheronlinecourse.Commans.Commans;
 import com.example.teacheronlinecourse.Models.ExamModel;
+import com.example.teacheronlinecourse.Models.ExamScoreModel;
 import com.example.teacheronlinecourse.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -188,22 +193,58 @@ public class Exams extends AppCompatActivity {
 
         adapter=new FirebaseRecyclerAdapter<ExamModel, FileAdapter>(ExamModel.class,R.layout.file_item,FileAdapter.class,databaseReference) {
             @Override
-            protected void populateViewHolder(FileAdapter fileAdapter, ExamModel examModel, final int i) {
+            protected void populateViewHolder(final FileAdapter fileAdapter, ExamModel examModel, final int i) {
 
                 fileAdapter.File.setText("Exam "+(i+1)+"\n");
 
                 fileAdapter.File.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_create_black_24dp, 0, 0, 0);
 
-                fileAdapter.itemView.setOnClickListener(new View.OnClickListener() {
+                databaseReference = FirebaseDatabase.getInstance().getReference("UserExamScors").child(Commans.registerModel.getEmail().replace(".", "Dot")).child("ExamsScors");
+                databaseReference.child(adapter.getRef(i).getKey()).addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onClick(View v) {
-                        Intent intent=new Intent(Exams.this,ExamQuestion.class);
-                        intent.putExtra("courseID",CourseID);
-                        intent.putExtra("categoryName",CategoryName);
-                        intent.putExtra("ExamID",adapter.getRef(i).getKey());
-                        startActivity(intent);
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            ExamScoreModel examScoreModel=dataSnapshot.getValue(ExamScoreModel.class);
+                            if (examScoreModel.getState().equals("faild")){
+                                fileAdapter.File.setEnabled(false);
+                                fileAdapter.File.setText("\n \t You faild in this exam.Try again later");
+
+                            }else {
+
+                                fileAdapter.itemView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent=new Intent(Exams.this,ExamQuestion.class);
+                                        intent.putExtra("courseID",CourseID);
+                                        intent.putExtra("categoryName",CategoryName);
+                                        intent.putExtra("ExamID",adapter.getRef(i).getKey());
+                                        startActivity(intent);
+                                    }
+                                });
+                            }
+                        }else {
+
+                            fileAdapter.itemView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent=new Intent(Exams.this,ExamQuestion.class);
+                                    intent.putExtra("courseID",CourseID);
+                                    intent.putExtra("categoryName",CategoryName);
+                                    intent.putExtra("ExamID",adapter.getRef(i).getKey());
+                                    startActivity(intent);
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
                     }
                 });
+
+
+
 
             }
         };

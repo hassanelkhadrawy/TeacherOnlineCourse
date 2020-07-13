@@ -36,6 +36,7 @@ import com.example.teacheronlinecourse.Fonts.Comfortaa_Bold;
 import com.example.teacheronlinecourse.Fonts.Comfortaa_Regular;
 import com.example.teacheronlinecourse.Models.ChaptersModel;
 import com.example.teacheronlinecourse.Models.CourseModel;
+import com.example.teacheronlinecourse.Models.CoursesEnroledModel;
 import com.example.teacheronlinecourse.Models.RateModel;
 import com.example.teacheronlinecourse.Models.SearchModel;
 import com.example.teacheronlinecourse.Models.TopCourseModel;
@@ -83,6 +84,8 @@ public class CourseInformation extends AppCompatActivity {
     private Comfortaa_Bold uploadChapter;
     private LinearLayout courseCountainer;
     private int CourseCount;
+    private int user_enroled_counter;
+    private DatabaseReference dREnroled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,12 +95,35 @@ public class CourseInformation extends AppCompatActivity {
         courseID = savedInstanceState.getString("courseID");
         categoryName = savedInstanceState.getString("categoryName");
 
+       dREnroled = FirebaseDatabase.getInstance().getReference("CoursesEnroled").child(courseID);
+        dREnroled.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+
+                if (dataSnapshot.exists()){
+                    CoursesEnroledModel coursesEnroledModel=dataSnapshot.getValue(CoursesEnroledModel.class);
+
+                    user_enroled_counter=coursesEnroledModel.getCounter_enroled_user()+1;
+
+                }else {
+                    user_enroled_counter=1;
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         initView();
         HideAdminItems();
         GetCourseInformation();
         AddCourseCounter();
         Action();
+
+
     }
 
     private void initView() {
@@ -200,6 +226,7 @@ public class CourseInformation extends AppCompatActivity {
                                     UserCoursesModel userCoursesModel = userSnapshot.getValue(UserCoursesModel.class);
                                     if (userCoursesModel.getCourse_id().equals(courseModel.getCourse_id())) {
                                         enrol.setVisibility(View.GONE);
+                                        addRate.setVisibility(View.VISIBLE);
                                         recycler.setVisibility(View.VISIBLE);
                                         exams.setVisibility(View.VISIBLE);
                                         GetChapters();
@@ -235,7 +262,13 @@ public class CourseInformation extends AppCompatActivity {
                 databaseReference = FirebaseDatabase.getInstance().getReference("UserCourses");
                 UserCoursesModel userCoursesModel = new UserCoursesModel(categoryName, courseID, courseName, courseImageUrl);
                 databaseReference.child(Commans.registerModel.getEmail().replace(".", "Dot")).child("Enroled").child(String.valueOf(System.currentTimeMillis())).setValue(userCoursesModel);
+
+                CoursesEnroledModel coursesEnroledModel=new CoursesEnroledModel(user_enroled_counter);
+                dREnroled.setValue(coursesEnroledModel);
+
+
                 enrol.setVisibility(View.GONE);
+                addRate.setVisibility(View.VISIBLE);
                 recycler.setVisibility(View.VISIBLE);
                 exams.setVisibility(View.VISIBLE);
 

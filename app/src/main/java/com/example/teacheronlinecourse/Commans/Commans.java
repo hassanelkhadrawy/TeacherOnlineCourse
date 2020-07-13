@@ -15,16 +15,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.teacheronlinecourse.Activities.AdminCoursesInfo;
+import com.example.teacheronlinecourse.Activities.Courses;
 import com.example.teacheronlinecourse.Adapters.CoursesAdapter;
 import com.example.teacheronlinecourse.Models.AdminModel;
 import com.example.teacheronlinecourse.Models.CourseModel;
 import com.example.teacheronlinecourse.Models.FAvouriteModel;
 import com.example.teacheronlinecourse.Models.RegisterModel;
+import com.example.teacheronlinecourse.Models.UserCoursesModel;
 import com.example.teacheronlinecourse.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -41,6 +45,9 @@ public class Commans {
     public static ProgressDialog progressDialog;
    public static RegisterModel registerModel;
    public static ArrayList<String>adminList=new ArrayList<>();
+    public static ArrayList<String>usersList=new ArrayList<>();
+   public static DatabaseReference databaseReference;
+
 
     public static void Prograss(Context context,String Message){
         progressDialog=new ProgressDialog(context, R.style.MyAlertDialogStyle);
@@ -221,5 +228,43 @@ public class Commans {
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
+    }
+    public static void GetUsers(final Activity activity){
+        usersList.clear();
+      databaseReference= FirebaseDatabase.getInstance().getReference("Users");
+      databaseReference.addValueEventListener(new ValueEventListener() {
+          @Override
+          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+              for (DataSnapshot usersnapshot : dataSnapshot.getChildren()) {
+                  final RegisterModel registerModel = usersnapshot.getValue(RegisterModel.class);
+                  databaseReference = FirebaseDatabase.getInstance().getReference("UserCourses").child(registerModel.getEmail().replace(".","Dot"));
+
+
+                  databaseReference.child("Enroled").addValueEventListener(new ValueEventListener() {
+                      @Override
+                      public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                          if (dataSnapshot.exists()){
+                              usersList.add(registerModel.getEmail().replace(".","Dot"));
+//                              Toast.makeText(activity, ""+registerModel.getEmail(), Toast.LENGTH_SHORT).show();
+
+                          }
+                      }
+
+                      @Override
+                      public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                      }
+                  });
+
+
+              }
+          }
+
+          @Override
+          public void onCancelled(@NonNull DatabaseError databaseError) {
+
+          }
+      });
+
     }
 }

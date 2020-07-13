@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
+    android:background="@drawable/ex2_background"
     android:padding="15dp"
     tools:context=".Activities.ExamQuestion">
     <ScrollView

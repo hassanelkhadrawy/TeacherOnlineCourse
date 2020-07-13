@@ -1,7 +1,9 @@
 package com.example.teacheronlinecourse.Activities;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -59,7 +61,7 @@ public class FavouriteCourses extends Fragment {
     private void initView(View view) {
         favouriteRecycler = (RecyclerView)view. findViewById(R.id.favourite_recycler);
     }
-    private void GetFivouriteCourses(){
+    private final void GetFivouriteCourses(){
 
         databaseReference= FirebaseDatabase.getInstance().getReference("CoursesFavourite").child(Commans.registerModel.getEmail().replace(".","Dot"));
         recyclerAdapter=new FirebaseRecyclerAdapter<FAvouriteModel, CoursesAdapter>(FAvouriteModel.class,R.layout.courses_item,CoursesAdapter.class,databaseReference) {
@@ -141,11 +143,29 @@ public class FavouriteCourses extends Fragment {
             }
 
             @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int direction) {
 
-                int position = viewHolder.getAdapterPosition();
-                recyclerAdapter.getRef(position).removeValue();
+                AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+                builder.setMessage("Do you want to delete this course?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int position = viewHolder.getAdapterPosition();
+                        recyclerAdapter.getRef(position).removeValue();
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        GetFivouriteCourses();
+                        dialog.dismiss();
+                    }
+                });
 
+
+                builder.show();
             }
         });
         helper.attachToRecyclerView(favouriteRecycler);

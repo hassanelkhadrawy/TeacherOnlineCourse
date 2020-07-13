@@ -13,9 +13,6 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -25,7 +22,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,7 +36,6 @@ import com.example.teacheronlinecourse.Fonts.Comfortaa_Regular;
 import com.example.teacheronlinecourse.Models.AdminModel;
 import com.example.teacheronlinecourse.Models.CategoryModel;
 import com.example.teacheronlinecourse.Models.CourseModel;
-import com.example.teacheronlinecourse.Models.RateModel;
 import com.example.teacheronlinecourse.Models.RegisterModel;
 import com.example.teacheronlinecourse.Models.SearchModel;
 import com.example.teacheronlinecourse.R;
@@ -78,6 +73,7 @@ public class ProfileTab extends Fragment {
     private TextView addAdmin;
     private TextView Edit;
     private TextView Users;
+    private TextView CoursesInformation;
     private ImageView proImage;
     private ImageView editProfImage;
     private EditText editTextName;
@@ -130,6 +126,7 @@ public class ProfileTab extends Fragment {
         addAdmin = view.findViewById(R.id.add_admin);
         Edit = view.findViewById(R.id.edit);
         Users=view.findViewById(R.id.users);
+        CoursesInformation=view.findViewById(R.id.Courses_Information);
         proImage = view.findViewById(R.id.proImage);
         profCountainer = (LinearLayout) view.findViewById(R.id.prof_countainer);
         addcategory = view.findViewById(R.id.addcategory);
@@ -166,8 +163,26 @@ public class ProfileTab extends Fragment {
             public void onClick(View v) {
 
                 saveState("null","null");
-                startActivity(new Intent(getActivity(), Login.class));
-                getActivity().finish();
+                AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+                builder.setMessage("Do you want exit?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(getActivity(), Login.class));
+                        dialog.dismiss();
+                        getActivity().finish();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
+
+
             }
         });
 
@@ -210,6 +225,15 @@ public class ProfileTab extends Fragment {
                 startActivity(new Intent(getActivity(),UsersAvtivity.class));
             }
         });
+
+        CoursesInformation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), AdminCategoriesInfo.class));
+
+            }
+        });
+
         addAdmin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -555,11 +579,15 @@ public class ProfileTab extends Fragment {
                 addcategory.setVisibility(View.GONE);
                 addCourse.setVisibility(View.GONE);
                 Users.setVisibility(View.GONE);
+                CoursesInformation.setVisibility(View.GONE);
+
             }else {
                 addAdmin.setVisibility(View.VISIBLE);
                 addcategory.setVisibility(View.VISIBLE);
                 addCourse.setVisibility(View.VISIBLE);
                 Users.setVisibility(View.VISIBLE);
+                CoursesInformation.setVisibility(View.VISIBLE);
+
                 break;
             }
         }

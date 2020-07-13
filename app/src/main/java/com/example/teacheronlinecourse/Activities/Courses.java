@@ -46,7 +46,7 @@ public class Courses extends AppCompatActivity {
         retriveCourses();
     }
 
-    private void retriveCourses() {
+    public  void retriveCourses() {
         Commans.Prograss(this, getString(R.string.waiting));
         databaseReference = FirebaseDatabase.getInstance().getReference("Courses").child(CategoryName);
 

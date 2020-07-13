@@ -133,12 +133,12 @@ public class Login extends AppCompatActivity {
 
                         }else {
                             Commans.progressDialog.dismiss();
-                            Snackbar.make(loginCountainer, getString(R.string.emailpasswordwrong), Snackbar.LENGTH_SHORT).show();
+                            Toast.makeText(Login.this, R.string.emailpasswordwrong, Toast.LENGTH_SHORT).show();
 
                         }
                     } else {
                         Commans.progressDialog.dismiss();
-                        Snackbar.make(loginCountainer, getString(R.string.emailpasswordwrong), Snackbar.LENGTH_SHORT).show();
+                        Toast.makeText(Login.this, R.string.emailpasswordwrong, Toast.LENGTH_SHORT).show();
 
                     }
 

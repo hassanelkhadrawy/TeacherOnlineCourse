@@ -111,8 +111,16 @@ public class ExamQuestion extends AppCompatActivity {
 
                 } else {
                     next.setVisibility(View.GONE);
-                    SaveScore();
-                    questiontext.setText(Score + " from " + examList.size());
+                    double range;
+                    range=(examList.size() / 2.0);
+                    if (Score >= range){
+                        SaveScore("passed");
+                        questiontext.setText(Score + " from " + examList.size() +"\n You passed in exam");
+                    }else {
+                        SaveScore("faild");
+                        questiontext.setText(Score + " from " + examList.size() +"\n You faild in exam. Try again later");
+
+                    }
                     radiogroub.setVisibility(View.GONE);
                 }
 
@@ -171,10 +179,10 @@ public class ExamQuestion extends AppCompatActivity {
         });
     }
 
-    private void SaveScore() {
+    private void SaveScore(String state) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("UserExamScors");
-        ExamScoreModel examScoreModel = new ExamScoreModel(CategoryName, CourseID, ExamID, Score + " from " + examList.size());
-        databaseReference.child(Commans.registerModel.getEmail().replace(".", "Dot")).child("ExamsScors").child(String.valueOf(System.currentTimeMillis())).setValue(examScoreModel);
+        ExamScoreModel examScoreModel = new ExamScoreModel(CategoryName, CourseID, ExamID, Score + " from " + examList.size(),state);
+        databaseReference.child(Commans.registerModel.getEmail().replace(".", "Dot")).child("ExamsScors").child(ExamID).setValue(examScoreModel);
 
 
     }
