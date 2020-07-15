@@ -37,6 +37,7 @@ import com.example.teacheronlinecourse.Fonts.Comfortaa_Regular;
 import com.example.teacheronlinecourse.Models.ChaptersModel;
 import com.example.teacheronlinecourse.Models.CourseModel;
 import com.example.teacheronlinecourse.Models.CoursesEnroledModel;
+import com.example.teacheronlinecourse.Models.FAvouriteModel;
 import com.example.teacheronlinecourse.Models.RateModel;
 import com.example.teacheronlinecourse.Models.SearchModel;
 import com.example.teacheronlinecourse.Models.TopCourseModel;
@@ -65,6 +66,7 @@ public class CourseInformation extends AppCompatActivity {
     private TextView courseDescription;
     private TextView enrol;
     private TextView addRate;
+    private TextView Like;
     private TextView EditCourse;
     private TextView exams;
     private String courseID, categoryName, courseName, courseImageUrl;
@@ -133,8 +135,8 @@ public class CourseInformation extends AppCompatActivity {
         enrol = findViewById(R.id.enrol);
         addRate = findViewById(R.id.addRate);
         EditCourse = findViewById(R.id.editcourse);
+        Like=findViewById(R.id.like);
         recycler = (RecyclerView) findViewById(R.id.recycler);
-
         courseCountainer = (LinearLayout) findViewById(R.id.courseCountainer);
         exams = (TextView) findViewById(R.id.exams);
     }
@@ -226,6 +228,7 @@ public class CourseInformation extends AppCompatActivity {
                                     UserCoursesModel userCoursesModel = userSnapshot.getValue(UserCoursesModel.class);
                                     if (userCoursesModel.getCourse_id().equals(courseModel.getCourse_id())) {
                                         enrol.setVisibility(View.GONE);
+                                        Like.setVisibility(View.VISIBLE);
                                         addRate.setVisibility(View.VISIBLE);
                                         recycler.setVisibility(View.VISIBLE);
                                         exams.setVisibility(View.VISIBLE);
@@ -240,6 +243,33 @@ public class CourseInformation extends AppCompatActivity {
 
                         }
                     });
+
+                    databaseReference = FirebaseDatabase.getInstance().getReference("CoursesFavourite").child(Commans.registerModel.getEmail().replace(".", "Dot")).child(courseID);
+                    databaseReference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                FAvouriteModel fAvouriteModel = dataSnapshot.getValue(FAvouriteModel.class);
+                                if (fAvouriteModel.isFavourite()) {
+                                    Like.setText("unlike");
+                                } else {
+                                    Like.setText("Like");
+
+
+                                }
+
+                            }else {
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
 
                 }
 
@@ -268,6 +298,7 @@ public class CourseInformation extends AppCompatActivity {
 
 
                 enrol.setVisibility(View.GONE);
+                Like.setVisibility(View.VISIBLE);
                 addRate.setVisibility(View.VISIBLE);
                 recycler.setVisibility(View.VISIBLE);
                 exams.setVisibility(View.VISIBLE);
@@ -285,6 +316,31 @@ public class CourseInformation extends AppCompatActivity {
             public void onClick(View v) {
 
                 Create_Rate();
+            }
+        });
+
+        Like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isFavourite;
+
+
+                isFavourite = readStateFavourite();
+                if (isFavourite) {
+                    Like.setText("unlike");
+                    isFavourite = false;
+                    AddFavouriteِ();
+                    saveStateFavourite(isFavourite);
+
+
+                } else {
+                    Like.setText("Like");
+                    isFavourite = true;
+                    DeleteFavouriteِ();
+                    saveStateFavourite(isFavourite);
+
+
+                }
             }
         });
 
@@ -518,7 +574,7 @@ public class CourseInformation extends AppCompatActivity {
             protected void populateViewHolder(final ChapterAdapter chapterAdapter, ChaptersModel chaptersModel, final int i) {
                 chapterAdapter.ChapterName.setText(chaptersModel.getChapter_name());
                 chapterAdapter.ChapterNum.setText((i + 1) + "");
-                coursechapternum.setText((i + 1) + " Chapter");
+                coursechapternum.setText((i + 1) + " Chapters");
 
 
                 int position = readState();
@@ -553,6 +609,22 @@ public class CourseInformation extends AppCompatActivity {
 
     }
 
+    private void saveStateFavourite(boolean isFavourite) {
+        SharedPreferences aSharedPreferences = this.getSharedPreferences(
+                "Favourite", Context.MODE_PRIVATE);
+        SharedPreferences.Editor aSharedPreferencesEdit = aSharedPreferences
+                .edit();
+        aSharedPreferencesEdit.putBoolean("State", isFavourite);
+        aSharedPreferencesEdit.commit();
+    }
+
+    private boolean readStateFavourite() {
+        SharedPreferences aSharedPreferences = this.getSharedPreferences(
+                "Favourite", Context.MODE_PRIVATE);
+        return aSharedPreferences.getBoolean("State", true);
+    }
+
+
     private void saveState(int position) {
         SharedPreferences aSharedPreferences = getSharedPreferences(
                 "Favourite", Context.MODE_PRIVATE);
@@ -578,6 +650,18 @@ public class CourseInformation extends AppCompatActivity {
 
             }
         }
+
+    }
+    private void AddFavouriteِ() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("CoursesFavourite").child(Commans.registerModel.getEmail().replace(".", "Dot")).child(courseID);
+        FAvouriteModel fAvouriteModel = new FAvouriteModel(true, courseImageUrl, courseName, categoryName);
+        databaseReference.setValue(fAvouriteModel);
+
+    }
+
+    private void DeleteFavouriteِ() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("CoursesFavourite").child(Commans.registerModel.getEmail().replace(".", "Dot")).child(courseID);
+        databaseReference.removeValue();
 
     }
 
