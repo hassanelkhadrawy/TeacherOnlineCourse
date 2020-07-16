@@ -50,7 +50,7 @@ public class ExamScors extends AppCompatActivity {
                         if (dataSnapshot.exists()){
                             CourseModel courseModel=dataSnapshot.getValue(CourseModel.class);
                             fileAdapter.File.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_attach_file_black_24dp, 0, 0, 0);
-                            fileAdapter.File.setText("Quez "+(i + 1)+"\n" + "Course name: "+ courseModel.getCourse_name()+"\n"+ "Score: "+examScoreModel.getScore()  );
+                            fileAdapter.File.setText("Quez "+(i + 1)+"\n" + "Course name: "+ courseModel.getCourse_name()+"\n"+ "Score: "+examScoreModel.getScore()+" from "+examScoreModel.getNum_ques()  );
                         }
                     }
 

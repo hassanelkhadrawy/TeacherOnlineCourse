@@ -4,14 +4,16 @@ public class ExamScoreModel {
     String categoryName;
     String courseID;
     String examID;
-    String score;
+    int score;
+    int num_ques;
     String state;
 
-    public ExamScoreModel(String categoryName, String courseID, String examID, String score, String state) {
+    public ExamScoreModel(String categoryName, String courseID, String examID, int score, int num_ques, String state) {
         this.categoryName = categoryName;
         this.courseID = courseID;
         this.examID = examID;
         this.score = score;
+        this.num_ques = num_ques;
         this.state = state;
     }
 
@@ -42,12 +44,20 @@ public class ExamScoreModel {
         this.examID = examID;
     }
 
-    public String getScore() {
+    public int getScore() {
         return score;
     }
 
-    public void setScore(String score) {
+    public void setScore(int score) {
         this.score = score;
+    }
+
+    public int getNum_ques() {
+        return num_ques;
+    }
+
+    public void setNum_ques(int num_ques) {
+        this.num_ques = num_ques;
     }
 
     public String getState() {

@@ -42,8 +42,13 @@ public class Exams extends AppCompatActivity {
     private EditText answertxt_1;
     private EditText answertxt_2;
     private EditText answertxt_3;
+    private int sum;
+    private int degree;
+
 
     private TextView AddQuestion;
+    private TextView F_Reasult;
+
     private ArrayList<ExamModel> Questiolist = new ArrayList<>();
     private String CourseID, CategoryName;
     private DatabaseReference databaseReference;
@@ -189,8 +194,8 @@ public class Exams extends AppCompatActivity {
 
 
     private void GetExams(){
-        databaseReference = FirebaseDatabase.getInstance().getReference("CoursesData").child(CategoryName).child(CourseID).child("Exams");
 
+        databaseReference = FirebaseDatabase.getInstance().getReference("CoursesData").child(CategoryName).child(CourseID).child("Exams");
         adapter=new FirebaseRecyclerAdapter<ExamModel, FileAdapter>(ExamModel.class,R.layout.file_item,FileAdapter.class,databaseReference) {
             @Override
             protected void populateViewHolder(final FileAdapter fileAdapter, ExamModel examModel, final int i) {
@@ -203,22 +208,45 @@ public class Exams extends AppCompatActivity {
                 databaseReference.child(adapter.getRef(i).getKey()).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()){
-                            ExamScoreModel examScoreModel=dataSnapshot.getValue(ExamScoreModel.class);
-                            if (examScoreModel.getState().equals("faild")){
-                                fileAdapter.File.setEnabled(false);
-                                fileAdapter.File.setText("\n \t You faild in this exam.Try again later");
+                        if (dataSnapshot.exists()) {
+                            ExamScoreModel examScoreModel = dataSnapshot.getValue(ExamScoreModel.class);
 
-                            }else {
+                            sum = sum + examScoreModel.getScore();
+                            degree = degree + examScoreModel.getNum_ques();
+                            F_Reasult.setText("Final reasult = "+((sum*100)/degree) + "%");
+                            if (examScoreModel.getState().equals("faild")) {
+                                fileAdapter.File.setEnabled(false);
+                                fileAdapter.File.setText("\n \t You have practiced this exam.");
+                               // fileAdapter.File.setText("\n \t You faild in this exam.Try again later after 7 days");
+
+                            } else if (examScoreModel.getState().equals("passed")) {
+
+                                fileAdapter.File.setEnabled(false);
+                                fileAdapter.File.setText("\n \t You have practiced this exam.");
+
+//                                fileAdapter.itemView.setOnClickListener(new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View v) {
+//                                        Intent intent=new Intent(Exams.this,ExamQuestion.class);
+//                                        intent.putExtra("courseID",CourseID);
+//                                        intent.putExtra("categoryName",CategoryName);
+//                                        intent.putExtra("ExamID",adapter.getRef(i).getKey());
+//                                        startActivity(intent);
+//                                    }
+//                                });
+
+                            } else {
+
 
                                 fileAdapter.itemView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        Intent intent=new Intent(Exams.this,ExamQuestion.class);
-                                        intent.putExtra("courseID",CourseID);
-                                        intent.putExtra("categoryName",CategoryName);
-                                        intent.putExtra("ExamID",adapter.getRef(i).getKey());
+                                        Intent intent = new Intent(Exams.this, ExamQuestion.class);
+                                        intent.putExtra("courseID", CourseID);
+                                        intent.putExtra("categoryName", CategoryName);
+                                        intent.putExtra("ExamID", adapter.getRef(i).getKey());
                                         startActivity(intent);
+                                        finish();
                                     }
                                 });
                             }
@@ -227,14 +255,17 @@ public class Exams extends AppCompatActivity {
                             fileAdapter.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent=new Intent(Exams.this,ExamQuestion.class);
-                                    intent.putExtra("courseID",CourseID);
-                                    intent.putExtra("categoryName",CategoryName);
-                                    intent.putExtra("ExamID",adapter.getRef(i).getKey());
+                                    Intent intent = new Intent(Exams.this, ExamQuestion.class);
+                                    intent.putExtra("courseID", CourseID);
+                                    intent.putExtra("categoryName", CategoryName);
+                                    intent.putExtra("ExamID", adapter.getRef(i).getKey());
                                     startActivity(intent);
+                                    finish();
                                 }
                             });
+
                         }
+
                     }
 
                     @Override
@@ -248,12 +279,18 @@ public class Exams extends AppCompatActivity {
 
             }
         };
+
+        if (degree==0){
+//            F_Reasult.setVisibility(View.GONE);
+
+        }
         recyclerexam.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         recyclerexam.setAdapter(adapter);
 
     }
     private void initView() {
         recyclerexam = (RecyclerView) findViewById(R.id.recyclerexam);
+        F_Reasult=findViewById(R.id.f_result);
     }
 
     @Override

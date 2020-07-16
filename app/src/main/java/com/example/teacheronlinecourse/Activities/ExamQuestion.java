@@ -181,7 +181,7 @@ public class ExamQuestion extends AppCompatActivity {
 
     private void SaveScore(String state) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("UserExamScors");
-        ExamScoreModel examScoreModel = new ExamScoreModel(CategoryName, CourseID, ExamID, Score + " from " + examList.size(),state);
+        ExamScoreModel examScoreModel = new ExamScoreModel(CategoryName, CourseID, ExamID, Score , examList.size(),state);
         databaseReference.child(Commans.registerModel.getEmail().replace(".", "Dot")).child("ExamsScors").child(ExamID).setValue(examScoreModel);
 
 

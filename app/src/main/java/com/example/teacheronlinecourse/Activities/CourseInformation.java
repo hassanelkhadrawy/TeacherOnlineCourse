@@ -228,7 +228,6 @@ public class CourseInformation extends AppCompatActivity {
                                     UserCoursesModel userCoursesModel = userSnapshot.getValue(UserCoursesModel.class);
                                     if (userCoursesModel.getCourse_id().equals(courseModel.getCourse_id())) {
                                         enrol.setVisibility(View.GONE);
-                                        Like.setVisibility(View.VISIBLE);
                                         addRate.setVisibility(View.VISIBLE);
                                         recycler.setVisibility(View.VISIBLE);
                                         exams.setVisibility(View.VISIBLE);
@@ -251,9 +250,9 @@ public class CourseInformation extends AppCompatActivity {
                             if (dataSnapshot.exists()) {
                                 FAvouriteModel fAvouriteModel = dataSnapshot.getValue(FAvouriteModel.class);
                                 if (fAvouriteModel.isFavourite()) {
-                                    Like.setText("unlike");
+                                    Like.setText("Delete from wishlist");
                                 } else {
-                                    Like.setText("Like");
+                                    Like.setText("Add to wishlist");
 
 
                                 }
@@ -298,7 +297,6 @@ public class CourseInformation extends AppCompatActivity {
 
 
                 enrol.setVisibility(View.GONE);
-                Like.setVisibility(View.VISIBLE);
                 addRate.setVisibility(View.VISIBLE);
                 recycler.setVisibility(View.VISIBLE);
                 exams.setVisibility(View.VISIBLE);
@@ -327,14 +325,14 @@ public class CourseInformation extends AppCompatActivity {
 
                 isFavourite = readStateFavourite();
                 if (isFavourite) {
-                    Like.setText("unlike");
+                    Like.setText("Delete from wishlist");
                     isFavourite = false;
                     AddFavouriteِ();
                     saveStateFavourite(isFavourite);
 
 
                 } else {
-                    Like.setText("Like");
+                    Like.setText("Add to wishlist");
                     isFavourite = true;
                     DeleteFavouriteِ();
                     saveStateFavourite(isFavourite);
@@ -644,8 +642,11 @@ public class CourseInformation extends AppCompatActivity {
         for (int i = 0; i < Commans.adminList.size(); i++) {
             if (!Commans.registerModel.getEmail().equals(Commans.adminList.get(i))) {
                 EditCourse.setVisibility(View.GONE);
+                Like.setVisibility(View.VISIBLE);
+
             }else {
                 EditCourse.setVisibility(View.VISIBLE);
+                Like.setVisibility(View.GONE);
                 break;
 
             }
